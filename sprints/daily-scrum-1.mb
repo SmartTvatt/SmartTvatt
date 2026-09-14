@@ -1,6 +1,6 @@
 # Daily Scrum – September 14, 2026
 
-**Attendees:** Ellen, Jafar, Gresa, Vasilis[cite: 1]  
+**Attendees:** Ellen, Jafar, Gresa, Vasilis  
 **Decision:** Project tasks are divided vertically into feature-based modules (full-stack), meaning each person/pair is responsible for both the frontend (React views) and backend (routes, controllers, and database logic) for their assigned area.
 
 ---
@@ -15,12 +15,12 @@
 
 ### Task & Area Distribution
 
-#### 1. Authentication & Account Management (ELLEN)[cite: 1]
+#### 1. Authentication & Account Management (ELLEN)
 * **Scope:** USER – Login & Registration
 * **Frontend:** Login page, registration form, and "Forgot Password" view.
 * **Backend:** Auth controller, JWT token generation/validation, and password hashing (bcrypt).
 
-#### 2. User Dashboard & Admin Panel (JAFAR & VASILIS)[cite: 1]
+#### 2. User Dashboard & Admin Panel (JAFAR & VASILIS)
 * **USER Dashboard:** 
   * Overview of current active bookings immediately upon logging in.
   * Navigation menu for booking and cancelling slots.
@@ -29,7 +29,7 @@
   * Management panel with menus to configure available times and days.
   * Feature and backend logic to send broadcast announcements/messages to users.
 
-#### 3. Booking, Cancellation & Messages (GRESA)[cite: 1]
+#### 3. Booking, Cancellation & Messages (GRESA)
 * **Booking Page:** 
   * Responsive view to see all real-time available time slots and complete a booking.
   * Dedicated message center/window to read incoming announcements from admin.
@@ -39,6 +39,6 @@
 
 ---
 
-### Backlog / Future Features (If time permits)[cite: 1]
-- [ ] Automated reminders sent to residents ahead of scheduled time slots[cite: 1].
-- [ ] Machine fault reporting (allowing residents to notify admins regarding broken equipment)[cite: 1].
+### Backlog / Future Features (If time permits)
+- [ ] Automated reminders sent to residents ahead of scheduled time slots.
+- [ ] Machine fault reporting (allowing residents to notify admins regarding broken equipment).
