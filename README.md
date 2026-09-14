@@ -1,2 +1,2 @@
 # SmartTvatt
-Developing web application called SmartTvätt. PArticipants: Gresa, Ellen, Vassilis, Jafar
+Developing web application called SmartTvätt. Participants: Gresa, Ellen, Vassilis, Jafar
