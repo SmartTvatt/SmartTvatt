@@ -1,0 +1,44 @@
+# Daily Scrum – September 14, 2026
+
+**Attendees:** Ellen, Jafar, Gresa, Vasilis  
+**Decision:** Project tasks are divided vertically into feature-based modules (full-stack), meaning each person/pair is responsible for both the frontend (React views) and backend (routes, controllers, and database logic) for their assigned area.
+
+---
+
+### Group Rules & Team Agreement
+1. **Continuous Communication:** We have divided the work between us, but will maintain continuous communication to ensure that development goes smoothly and components integrate seamlessly.
+2. **Scrum Documentation:** We will document a Daily Scrum whenever we have group meetings.
+3. **Streamlined Progress Tracking:** There is no need to write individual daily diaries, as long as we hold regular meetings and keep each other on track.
+4. **Meeting Cadence:** Group meetings will take place at least once a week, with extra bonus meetings scheduled whenever needed.
+
+---
+
+### Task & Area Distribution
+
+#### 1. Authentication & Account Management (ELLEN)
+* **Scope:** USER – Login & Registration
+* **Frontend:** Login page, registration form, and "Forgot Password" view.
+* **Backend:** Auth controller, JWT token generation/validation, and password hashing (bcrypt).
+
+#### 2. User Dashboard & Admin Panel (JAFAR & VASILIS)
+* **USER Dashboard:** 
+  * Overview of current active bookings immediately upon logging in.
+  * Navigation menu for booking and cancelling slots.
+  * Backend business logic: Restriction enforcing a **maximum of 1 active booking per household** at a time.
+* **ADMIN Dashboard:**
+  * Management panel with menus to configure available times and days.
+  * Feature and backend logic to send broadcast announcements/messages to users.
+
+#### 3. Booking, Cancellation & Messages (GRESA)
+* **Booking Page:** 
+  * Responsive view to see all real-time available time slots and complete a booking.
+  * Dedicated message center/window to read incoming announcements from admin.
+* **Cancellation Page:** 
+  * Feature to cancel an existing active booking.
+  * **Interactive UI Component:** A modal popup asking if the user would like to reserve a new time upon cancellation, redirecting them straight back to the booking page.
+
+---
+
+### Backlog / Future Features (If time permits)
+- [ ] Automated reminders sent to residents ahead of scheduled time slots.
+- [ ] Machine fault reporting (allowing residents to notify admins regarding broken equipment).
