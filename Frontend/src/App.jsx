@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
@@ -120,3 +121,10 @@ function App() {
 }
 
 export default App
+=======
+import Dashboard from './pages/Dashboard'
+
+export default function App() {
+  return <Dashboard />
+}
+>>>>>>> 5f0afd3d5c58486aa594bab116b7f41a82aa5780
