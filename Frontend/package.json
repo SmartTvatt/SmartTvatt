@@ -1,20 +1,12 @@
 {
-<<<<<<< HEAD
   "name": "frontend",
-=======
-  "name": "frontrnd",
->>>>>>> 5f0afd3d5c58486aa594bab116b7f41a82aa5780
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-<<<<<<< HEAD
-    "lint": "oxlint",
-=======
     "lint": "eslint .",
->>>>>>> 5f0afd3d5c58486aa594bab116b7f41a82aa5780
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,12 +14,6 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "oxlint": "^1.81.0",
-=======
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
@@ -36,7 +22,6 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
     "globals": "^17.12.0",
->>>>>>> 5f0afd3d5c58486aa594bab116b7f41a82aa5780
     "vite": "^8.3.0"
   }
 }
