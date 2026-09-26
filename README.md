@@ -11,25 +11,29 @@ Installera:
 - MongoDB (lokalt eller Atlas)
 
 ## 2. Klona projektet
+```bash
 git clone <repo-url>  
 cd SmartTvatt  
 
 ## 3. Backend
+```bash
 cd Backend  
 npm install  
 Skapa .env  
 
-Lägg till följande i Backend/.env:  
+Lägg till följande i Backend/.env:
 Code  
 MONGO_URI=mongodb://localhost:27017/smarttvatt  
 PORT=3001  
 
-Starta backend  
+Starta backend
+```bash
 bash  
 npm run dev 
 Backend kör nu på: http://localhost:3001  
 
 ## 4. Frontend
+```bash
 cd ../Frontend  
 npm install  
 npm run dev  
