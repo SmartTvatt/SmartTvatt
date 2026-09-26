@@ -7,6 +7,36 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material"
 const days = ["Mån", "Tis", "Ons", "Tors", "Fre"];
 const times = ["08:00", "10:00", "12:00", "14:00", "16:00"];
 
+// Dummy-data för bokade tider (av andra användare).
+// I backend kommer detta från databasen.
+const bookedSlots = [
+  { day: "Ons", time: "12:00" },
+  { day: "Fre", time: "10:00" }
+];
+
+// Dummy-data för användarens egen bokning.
+// I backend kommer detta från BookingInfoCard / API.
+const userBooking = { day: "Tis", time: "14:00" };
+
+// Funktion som avgör färgen på en cell baserat på status.
+function getCellColor(day, time) {
+  // Om cellen är användarens bokning → gul.
+  if (userBooking.day === day && userBooking.time === time) {
+    return "#ffeb3b; // gul
+  }
+
+  // Om cellen finns i listan över bokade tider → röd.
+  const isBooked = bookedSlots.some(
+    (slot) => slot.day === day && slot.time === time
+  );
+  if (isBooked) {
+    return "#ff6666"; // ljusröd
+  }
+
+  // Annars är cellen ledig → grön.
+  return "lightgreen";
+}
+
 // Själva komponenten som visar tabellen.
 // Den exporteras så BookingView kan importera den.
 // onSlotClick är en callback som triggas när användaren klickar på en cell.
@@ -43,18 +73,25 @@ export default function TimeSlotTable({ onSlotClick }) {
               <TableCell
                 key={day + time}
 
-                // Tillfällig styling: alla celler är "lediga" (grön).
+                // NYTT: Färgkodning baserat på status (ledig, bokad, din bokning).
                 sx={{
-                  backgroundColor: "lightgreen",
+                  backgroundColor: getCellColor(day, time),
                   cursor: "pointer",
-                  "&:hover": { backgroundColor: "#9fdf9f" }
+                  "&:hover": { opacity: 0.8 }
                 }}
 
                 // Klick-event som skickar tillbaka dag + tid till BookingView.
                 // BookingView öppnar sedan dialogen med rätt information.
                 onClick={() => onSlotClick({ day, time })}
               >
-                Ledig
+                {/* Texten ändras beroende på status */}
+                {userBooking.day === day && userBooking.time === time
+                  ? "Din bokning"
+                  : bookedSlots.some(
+                      (slot) => slot.day === day && slot.time === time
+                    )
+                  ? "Upptagen"
+                  : "Ledig"}
               </TableCell>
             ))}
           </TableRow>
