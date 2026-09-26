@@ -1,6 +1,6 @@
 
 import './Dashboard.css'
-
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
     return (
@@ -70,11 +70,11 @@ export default function Dashboard() {
                             </div>
                         </div>
                         <div className="action-list">
-                            <button className="action-button action-primary">
+                            <Link to="/boka" className="action-button action-primary">
                                 <span className="action-icon">＋</span>
                                 <span><strong>Boka tid</strong><small>Hitta en ledig tid</small></span>
                                 <span className="action-chevron">›</span>
-                            </button>
+                            </Link>
                             <button className="action-button action-danger">
                                 <span className="action-icon">×</span>
                                 <span><strong>Avboka tid</strong><small>Ändra din bokning</small></span>

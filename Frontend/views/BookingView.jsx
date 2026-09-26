@@ -6,6 +6,12 @@ import BookingInfoCard from "../components/BookingInfoCard";
 import TimeSlotTable from "../components/TimeSlotTable";
 import BookingDialog from "../components/BookingDialog";
 
+import BookingInfoCard from "../components/BookingInfoCard";
+import TimeSlotTable from "../components/TimeSlotTable";
+import BookingActionButtons from "../components/BookingActionButtons";
+import BookingDialog from "../components/BookingDialog";
+
+// Själva vyn för bokningssidan.
 export default function BookingView() {
 
   // State som styr om dialogen är öppen eller stängd.

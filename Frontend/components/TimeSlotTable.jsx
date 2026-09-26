@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material"
 // Detta är bara temporärt tills backend kopplas in.
 // Vi använder dessa för att rendera en enkel kalender.
 const days = ["Mån", "Tis", "Ons", "Tors", "Fre"];
-const times = ["08:00", "10:00", "12:00", "14:00", "16:00"];
+const times = ["08–12", "12–16", "16–20"];
 
 // Dummy-data för bokade tider (av andra användare).
 // I backend kommer detta från databasen.
