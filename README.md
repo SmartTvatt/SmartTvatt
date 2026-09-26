@@ -4,7 +4,7 @@ tu-ta-ta-ta-tu-ta-ta
 
 # 🚀 SmartTvätt – Hur du kör projektet (MERN)
 
-# 1. Förutsättningar
+## 1. Förutsättningar
 Installera:
 - Node.js (version 18+)
 - Git
