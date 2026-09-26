@@ -4,10 +4,6 @@ import { useState } from "react";
 // Importera komponenterna
 import BookingInfoCard from "../components/BookingInfoCard";
 import TimeSlotTable from "../components/TimeSlotTable";
-import BookingDialog from "../components/BookingDialog";
-
-import BookingInfoCard from "../components/BookingInfoCard";
-import TimeSlotTable from "../components/TimeSlotTable";
 import BookingActionButtons from "../components/BookingActionButtons";
 import BookingDialog from "../components/BookingDialog";
 
@@ -44,6 +40,8 @@ export default function BookingView() {
 
       {/* Kalendern får en callback som triggas vid klick */}
       <TimeSlotTable onSlotClick={handleSlotClick} />
+
+      <BookingActionButtons />
 
       {/* Dialogen öppnas när dialogOpen = true */}
       <BookingDialog

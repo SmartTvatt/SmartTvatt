@@ -22,7 +22,7 @@ const userBooking = { day: "Tis", time: "14:00" };
 function getCellColor(day, time) {
   // Om cellen är användarens bokning → gul.
   if (userBooking.day === day && userBooking.time === time) {
-    return "#ffeb3b; // gul
+    return "#ffeb3b"; // gul
   }
 
   // Om cellen finns i listan över bokade tider → röd.
