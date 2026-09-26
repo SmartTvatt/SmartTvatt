@@ -9,7 +9,8 @@ const times = ["08:00", "10:00", "12:00", "14:00", "16:00"];
 
 // Själva komponenten som visar tabellen.
 // Den exporteras så BookingView kan importera den.
-export default function TimeSlotTable() {
+// onSlotClick är en callback som triggas när användaren klickar på en cell.
+export default function TimeSlotTable({ onSlotClick }) {
   return (
     // Table är huvudkomponenten som håller hela kalendern.
     <Table>
@@ -41,13 +42,17 @@ export default function TimeSlotTable() {
             {days.map((day) => (
               <TableCell
                 key={day + time}
+
                 // Tillfällig styling: alla celler är "lediga" (grön).
-                // Detta ändras i Issue 18 (färgkodning).
                 sx={{
                   backgroundColor: "lightgreen",
                   cursor: "pointer",
                   "&:hover": { backgroundColor: "#9fdf9f" }
                 }}
+
+                // Klick-event som skickar tillbaka dag + tid till BookingView.
+                // BookingView öppnar sedan dialogen med rätt information.
+                onClick={() => onSlotClick({ day, time })}
               >
                 Ledig
               </TableCell>
