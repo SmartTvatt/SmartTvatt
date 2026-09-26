@@ -14,6 +14,7 @@ Installera:
 ```bash
 git clone <repo-url>  
 cd SmartTvatt  
+```md
 
 ## 3. Backend
 ```bash
