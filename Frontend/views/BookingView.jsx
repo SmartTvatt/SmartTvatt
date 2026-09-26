@@ -1,6 +1,11 @@
 // Importerar UI‑komponenter från Material‑UI.
 import { Box, Typography } from "@mui/material";
 
+import BookingInfoCard from "../components/BookingInfoCard";
+import TimeSlotTable from "../components/TimeSlotTable";
+import BookingActionButtons from "../components/BookingActionButtons";
+import BookingDialog from "../components/BookingDialog";
+
 // Själva vyn för bokningssidan.
 export default function BookingView() {
   return (
@@ -15,17 +20,18 @@ export default function BookingView() {
         Boka tid
       </Typography>
 
-      {/* Placeholder för komponenten som ska visa användarens bokning.
-          Vi lägger bara en text här tills vi implementerar komponenten i nästa issue. */}
-      <div>BookingInfoCard kommer här</div>
+      {/* Placeholder för komponenten som ska visa användarens bokning. */}
+      <BookingInfoCard />
 
       {/* Placeholder för tabellen med tider.
-          Den kommer från TimeSlotTable.jsx i nästa issue. */}
-      <div>TimeSlotTable kommer här</div>
+          Den kommer från TimeSlotTable.jsx. */}
+      <TimeSlotTable />
 
       {/* Placeholder för knapparna (boka/avboka).
           Den kommer från BookingActionButtons.jsx. */}
-      <div>BookingActionButtons kommer här</div>
+      <BookingActionButtons />
+
+      <BookingDialog />
     </Box>
   );
 }
