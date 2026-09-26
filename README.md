@@ -6,41 +6,55 @@ tu-ta-ta-ta-tu-ta-ta
 
 ## 1. Förutsättningar
 Installera:
-- Node.js (version 18+)
-- Git
-- MongoDB (lokalt eller Atlas)
+* Node.js (version 18+)
+* Git
+* MongoDB (lokalt eller Atlas)
 
 ## 2. Klona projektet
+
 ```bash
-git clone <repo-url>  
-cd SmartTvatt  
-```md
+git clone <repo-url>
+cd SmartTvatt
+```
 
 ## 3. Backend
-```bash
-cd Backend  
-npm install  
-Skapa .env  
 
-Lägg till följande i Backend/.env:
-Code  
-MONGO_URI=mongodb://localhost:27017/smarttvatt  
-PORT=3001  
+Gå till backend-mappen och installera beroenden:
 
-Starta backend
 ```bash
-bash  
-npm run dev 
-Backend kör nu på: http://localhost:3001  
+cd Backend
+npm install
+```
+
+Skapa en `.env`-fil i `Backend/` och lägg till följande:
+
+```env
+MONGO_URI=mongodb://localhost:27017/smarttvatt
+PORT=3001
+```
+
+Starta backend:
+
+```bash
+npm run dev
+```
+
+Backend kör nu på: `http://localhost:3001`
 
 ## 4. Frontend
+
+Gå till frontend-mappen och installera beroenden:
+
 ```bash
-cd ../Frontend  
-npm install  
-npm run dev  
-Frontend kör nu på: http://localhost:5173  
+cd ../Frontend
+npm install
+npm run dev
+```
+
+Frontend kör nu på: `http://localhost:5173`
 
 ## 5. Starta hela appen
-Starta backend  
-Starta frontend  
-Öppna webbläsaren på http://localhost:5173  
+
+1. Starta backend
+2. Starta frontend
+3. Öppna webbläsaren på `http://localhost:5173`
