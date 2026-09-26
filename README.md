@@ -10,11 +10,11 @@ Installera:
 - Git
 - MongoDB (lokalt eller Atlas)
 
-# 2. Klona projektet
+## 2. Klona projektet
 git clone <repo-url>
 cd SmartTvatt
 
-# 3. Backend
+## 3. Backend
 cd Backend
 npm install
 Skapa .env
@@ -29,13 +29,13 @@ bash
 npm run dev
 Backend kör nu på: http://localhost:3001
 
-# 4. Frontend
+## 4. Frontend
 cd ../Frontend
 npm install
 npm run dev
 Frontend kör nu på: http://localhost:5173
 
-# 5. Starta hela appen
+## 5. Starta hela appen
 Starta backend
 Starta frontend
 Öppna webbläsaren på http://localhost:5173
