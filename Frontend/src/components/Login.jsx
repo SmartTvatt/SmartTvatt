@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.svg';
 
 export default function Login() {
   // Hook från react-router-dom för att navigeras mellan sidor utan sidladdning
@@ -42,22 +43,18 @@ export default function Login() {
         
         {/* Logotyp och Rubriker */}
         <div style={{ marginBottom: '24px', textAlign: 'center' }}>
-          {/* Mörkgrön ikon för SmartTvätt */}
-          <div style={{
-            width: '48px',
-            height: '48px',
-            backgroundColor: '#1F6B56', // Projektets gröna profilfärg
-            color: '#ffffff',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            fontSize: '20px',
-            margin: '0 auto 12px auto'
-          }}>
-            S
-          </div>
+
+          {/* SmartTvätts maskotlogotyp */}
+          <img 
+            src={logo} 
+            alt="SmartTvätt Logotyp" 
+            style={{
+              height: '75px',
+              width: 'auto',
+              display: 'block',
+              margin: '0 auto 12px auto'
+            }} 
+        />
           <h1 style={{ fontSize: '24px', margin: '0 0 4px 0', color: '#111827' }}>SmartTvätt</h1>
           <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#6B7280' }}>Din tvättstuga, enklare</p>
           <h2 style={{ fontSize: '18px', margin: '0', color: '#111827' }}>Välkommen tillbaka</h2>

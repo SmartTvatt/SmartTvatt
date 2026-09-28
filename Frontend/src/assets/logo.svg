@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <!-- Tvättmaskinens kropp -->
+  <rect x="50" y="50" width="100" height="110" rx="12" fill="#ffffff" stroke="#1F6B56" stroke-width="6" />
+
+  <!-- Kontrollpanel upptill -->
+  <line x1="50" y1="80" x2="150" y2="80" stroke="#1F6B56" stroke-width="4" />
+  <circle cx="65" cy="65" r="4" fill="#1F6B56" />
+  <circle cx="78" cy="65" r="4" fill="#1F6B56" />
+  <circle cx="91" cy="65" r="4" fill="#1F6B56" />
+  <rect x="108" y="58" width="22" height="14" rx="3" fill="#1F6B56" />
+  <circle cx="140" cy="65" r="5" fill="none" stroke="#1F6B56" stroke-width="3" />
+
+  <!-- Lucka (ytter- och innercirkel) -->
+  <circle cx="100" cy="120" r="30" fill="#ffffff" stroke="#1F6B56" stroke-width="6" />
+  <circle cx="100" cy="120" r="22" fill="#F0FDF4" stroke="#1F6B56" stroke-width="3" />
+
+  <!-- Sött ansikte inuti luckan (ögon och leende) -->
+  <ellipse cx="90" cy="116" rx="2.5" ry="4" fill="#1F6B56" />
+  <ellipse cx="110" cy="116" rx="2.5" ry="4" fill="#1F6B56" />
+  <path d="M 94 123 Q 100 128 106 123" fill="none" stroke="#1F6B56" stroke-width="3" stroke-linecap="round" />
+  <ellipse cx="85" cy="122" rx="3" ry="2" fill="#A7F3D0" />
+  <ellipse cx="115" cy="122" rx="3" ry="2" fill="#A7F3D0" />
+
+  <!-- Vinkande arm (höger) -->
+  <path d="M 150 105 Q 168 95 162 82" fill="none" stroke="#1F6B56" stroke-width="5" stroke-linecap="round" />
+  <circle cx="162" cy="81" r="5" fill="#1F6B56" />
+
+  <!-- Vänster arm -->
+  <path d="M 50 108 Q 38 115 35 125" fill="none" stroke="#1F6B56" stroke-width="5" stroke-linecap="round" />
+  <circle cx="34" cy="126" r="5" fill="#1F6B56" />
+
+  <!-- Ben och fötter -->
+  <path d="M 75 160 L 75 172 C 75 176 66 176 66 172 L 66 170" fill="none" stroke="#1F6B56" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M 125 160 L 125 172 C 125 176 116 176 116 172 L 116 170" fill="none" stroke="#1F6B56" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Skumbubblor upptill -->
+  <circle cx="145" cy="48" r="6" fill="none" stroke="#1F6B56" stroke-width="3" />
+  <circle cx="156" cy="40" r="4" fill="none" stroke="#1F6B56" stroke-width="2.5" />
+  <circle cx="138" cy="38" r="3" fill="none" stroke="#1F6B56" stroke-width="2" />
+</svg>
