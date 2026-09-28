@@ -36,7 +36,7 @@ PORT=3001
 Starta backend:
 
 ```bash
-npm run dev
+npm start
 ```
 
 Backend kör nu på: `http://localhost:3001`
