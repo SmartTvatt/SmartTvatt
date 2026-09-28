@@ -13,7 +13,8 @@ export default function Login() {
   // Funktion som körs när inloggningsformuläret skickas
   const handleSubmit = (e) => {
     e.preventDefault(); // Förhindrar standardbeteendet att sidan laddas om
-    alert(`Inloggningsförsök med: ${email}`);
+    navigate('/');
+    //alert(`Inloggningsförsök med: ${email}`);
     // Här kopplas backend-anropet (POST /api/auth/login) på senare
   };
 

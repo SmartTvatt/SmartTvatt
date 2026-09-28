@@ -25,7 +25,8 @@ export default function Register() {
   // Funktion som körs när registreringsformuläret skickas
   const handleSubmit = (e) => {
     e.preventDefault(); // Förhindrar att sidan laddas om
-    alert(`Registreringsförsök för: ${formData.name}`);
+    navigate('/');
+    //alert(`Registreringsförsök för: ${formData.name}`);
     // Här kopplas backend-anropet (POST /api/auth/register) på senare
   };
 
