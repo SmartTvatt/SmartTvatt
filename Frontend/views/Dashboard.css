@@ -115,6 +115,7 @@
   margin-top: 8px;
   font-size: clamp(28px, 4vw, 40px);
   letter-spacing: -1.5px;
+  color: black;
 }
 
 .welcome-copy {
@@ -169,6 +170,7 @@
   margin-top: 7px;
   font-size: 19px;
   letter-spacing: -0.4px;
+  color: black;
 }
 
 .booking-badge {

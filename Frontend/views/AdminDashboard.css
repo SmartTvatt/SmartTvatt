@@ -1,0 +1,288 @@
+.admin-page {
+  --admin-ink: #182b35;
+  --admin-muted: #6b7d82;
+  --admin-line: #dce8e6;
+  --admin-paper: #ffffff;
+  --admin-green: #17745b;
+  --admin-green-dark: #0f5947;
+  min-height: 100vh;
+  padding: 44px max(24px, calc((100% - 1080px) / 2)) 64px;
+  background: #f4f8f6;
+  color: var(--admin-ink);
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+.admin-header,
+.interval-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.admin-header {
+  margin-bottom: 30px;
+}
+
+.admin-eyebrow {
+  margin: 0 0 8px;
+  color: var(--admin-green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 34px;
+  color: black;
+}
+
+.admin-intro,
+.interval-panel-heading p,
+.add-interval-panel > div > p {
+  margin: 8px 0 0;
+  color: var(--admin-muted);
+  font-size: 14px;
+}
+
+.admin-role,
+.interval-count {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #dff4e9;
+  color: var(--admin-green-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-role {
+  padding: 8px 13px;
+}
+
+.interval-panel,
+.add-interval-panel {
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  background: var(--admin-paper);
+}
+
+.interval-panel-heading {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.interval-panel-heading h2,
+.add-interval-panel h2 {
+  margin: 0;
+  font-size: 18px;
+  color: black;
+}
+
+.interval-count {
+  padding: 7px 10px;
+}
+
+.week-template-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--admin-line);
+  background: #f7fbf8;
+}
+
+.week-template-label {
+  color: var(--admin-green-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.week-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.week-days span {
+  min-width: 36px;
+  padding: 5px 7px;
+  border: 1px solid #c9e5d7;
+  border-radius: 5px;
+  background: #fff;
+  color: var(--admin-green-dark);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.interval-table-wrap {
+  overflow-x: auto;
+}
+
+.interval-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.interval-table th,
+.interval-table td {
+  padding: 12px 24px;
+  border-bottom: 1px solid #edf2f0;
+}
+
+.interval-table thead th {
+  color: var(--admin-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.interval-table tbody th {
+  width: 30%;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.interval-table tbody td {
+  color: var(--admin-muted);
+  font-size: 13px;
+}
+
+.time-input,
+.add-interval-form select,
+.add-interval-form input {
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--admin-ink);
+  font: inherit;
+}
+
+.time-input:focus,
+.add-interval-form select:focus,
+.add-interval-form input:focus {
+  border-color: var(--admin-green);
+  outline: 2px solid #dff4e9;
+}
+
+.interval-action-cell {
+  text-align: right;
+}
+
+.remove-interval-button {
+  padding: 7px 10px;
+  border: 1px solid #efd8d1;
+  border-radius: 6px;
+  background: #fff;
+  color: #a84432;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.remove-interval-button:hover {
+  background: #fff5f1;
+}
+
+.empty-day-row td {
+  font-style: italic;
+}
+
+.add-interval-panel {
+  margin-top: 20px;
+  padding: 22px 24px;
+}
+
+.add-interval-form {
+  display: grid;
+  grid-template-columns: minmax(125px, 1fr) minmax(125px, 1fr) auto;
+  align-items: end;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.add-interval-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--admin-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.add-interval-button {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--admin-green);
+  border-radius: 6px;
+  background: var(--admin-green);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.add-interval-button:hover {
+  background: var(--admin-green-dark);
+}
+
+.form-error {
+  margin: 12px 0 0;
+  color: #a84432;
+  font-size: 13px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 640px) {
+  .admin-page {
+    padding: 28px 16px 44px;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+  }
+
+  .admin-header h1 {
+    font-size: 28px;
+  }
+
+  .interval-panel-heading,
+  .interval-table th,
+  .interval-table td {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .week-template-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .add-interval-panel {
+    padding: 20px 16px;
+  }
+
+  .add-interval-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .add-interval-button {
+    grid-column: 1 / -1;
+  }
+}

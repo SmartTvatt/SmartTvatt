@@ -1,11 +1,11 @@
 // Importerar Material-UI komponenter för tabellen.
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import { bookingWeekdays, getBookingIntervals } from "../controllers/timeslotController";
 
 // Dummy-data för dagar och tider.
 // Detta är bara temporärt tills backend kopplas in.
 // Vi använder dessa för att rendera en enkel kalender.
-const days = ["Mån", "Tis", "Ons", "Tors", "Fre"];
-const times = ["08–12", "12–16", "16–20"];
+const days = bookingWeekdays;
 
 // Dummy-data för bokade tider (av andra användare).
 // I backend kommer detta från databasen.
@@ -41,6 +41,16 @@ function getCellColor(day, time) {
 // Den exporteras så BookingView kan importera den.
 // onSlotClick är en callback som triggas när användaren klickar på en cell.
 export default function TimeSlotTable({ onSlotClick }) {
+  const intervalsByDay = days.map((day) => ({
+    ...day,
+    intervals: getBookingIntervals(day.key),
+  }));
+  const intervals = [...new Map(
+    intervalsByDay.flatMap(({ intervals: dayIntervals }) =>
+      dayIntervals.map((interval) => [`${interval.start}-${interval.end}`, interval])
+    )
+  ).values()].sort((left, right) => left.start.localeCompare(right.start));
+
   return (
     // Table är huvudkomponenten som håller hela kalendern.
     <Table>
@@ -53,8 +63,8 @@ export default function TimeSlotTable({ onSlotClick }) {
 
           {/* Renderar varje dag som en kolumnrubrik. */}
           {days.map((day) => (
-            <TableCell key={day} align="center">
-              {day}
+            <TableCell key={day.key} align="center">
+              {day.short}
             </TableCell>
           ))}
         </TableRow>
@@ -62,40 +72,52 @@ export default function TimeSlotTable({ onSlotClick }) {
 
       {/* TableBody innehåller själva kalendern med tider och celler. */}
       <TableBody>
-        {times.map((time) => (
+        {intervals.map((interval) => {
+              const time = `${interval.start}–${interval.end}`;
+
+          return (
           // Varje tid är en rad i tabellen.
           <TableRow key={time}>
             {/* Första cellen i raden visar tiden. */}
             <TableCell>{time}</TableCell>
 
             {/* För varje dag skapar vi en cell. */}
-            {days.map((day) => (
+            {intervalsByDay.map((day) => {
+              const isAvailable = day.intervals.some(
+                (dayInterval) => dayInterval.start === interval.start && dayInterval.end === interval.end
+              );
+
+              return (
               <TableCell
-                key={day + time}
+                key={day.key + time}
 
                 // NYTT: Färgkodning baserat på status (ledig, bokad, din bokning).
                 sx={{
-                  backgroundColor: getCellColor(day, time),
-                  cursor: "pointer",
+                  backgroundColor: isAvailable ? getCellColor(day.short, time) : "#f1f4f2",
+                  cursor: isAvailable ? "pointer" : "default",
                   "&:hover": { opacity: 0.8 }
                 }}
 
                 // Klick-event som skickar tillbaka dag + tid till BookingView.
                 // BookingView öppnar sedan dialogen med rätt information.
-                onClick={() => onSlotClick({ day, time })}
+                onClick={() => isAvailable && onSlotClick({ day: day.short, time })}
               >
                 {/* Texten ändras beroende på status */}
-                {userBooking.day === day && userBooking.time === time
+                {!isAvailable
+                  ? "Ej tillgänglig"
+                  : userBooking.day === day.short && userBooking.time === time
                   ? "Din bokning"
                   : bookedSlots.some(
-                      (slot) => slot.day === day && slot.time === time
+                      (slot) => slot.day === day.short && slot.time === time
                     )
                   ? "Upptagen"
                   : "Ledig"}
               </TableCell>
-            ))}
+              );
+            })}
           </TableRow>
-        ))}
+          );
+        })}
       </TableBody>
     </Table>
   );
