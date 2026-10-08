@@ -37,10 +37,10 @@ function getSlotStatus(day, time, isAvailable, bookedSlots, userBooking) {
 // Håller färgvalen samlade så att status och utseende inte glider isär.
 function getCellColor(status) {
   const colors = {
-    own: "#ffeb3b",
-    booked: "#ff6666",
-    unavailable: "#f1f4f2",
-    available: "lightgreen",
+    own: "#c6e8d8",
+    booked: "#fff0eb",
+    unavailable: "#eef3f1",
+    available: "#dff4e9",
   };
 
   return colors[status];
@@ -80,7 +80,7 @@ export default function TimeSlotTable({
   return (
     <Box>
       {/* TableContainer låter tabellen scrolla i sidled på smala skärmar. */}
-      <TableContainer sx={{ overflowX: "auto" }}>
+      <TableContainer className="booking-table-card" sx={{ overflowX: "auto" }}>
         {/* Table är huvudkomponenten som håller hela kalendern. */}
         <Table aria-label="Bokningsbara tvättider" sx={{ minWidth: 600 }}>
 
@@ -137,6 +137,7 @@ export default function TimeSlotTable({
                         {/* BookingView öppnar sedan dialogen med rätt information. */}
                         <Button
                           type="button"
+                          className={`slot-button slot-button--${status}`}
                           disabled={!canSelect}
                           aria-label={`${day.label} ${time}: ${getStatusLabel(status)}`}
                           onClick={() => onSlotClick({ day: day.short, time })}
@@ -171,6 +172,7 @@ export default function TimeSlotTable({
       {/* Färgförklaringen använder alltid text så att status inte bara syns genom färg. */}
       <Box
         component="ul"
+        className="booking-legend"
         aria-label="Förklaring av tider"
         sx={{
           display: "flex",
@@ -190,10 +192,12 @@ export default function TimeSlotTable({
           <Box
             component="li"
             key={status}
+            className="booking-legend__item"
             sx={{ display: "flex", alignItems: "center", gap: 0.75 }}
           >
             <Box
               aria-hidden="true"
+              className="booking-legend__swatch"
               sx={{
                 width: 16,
                 height: 16,
