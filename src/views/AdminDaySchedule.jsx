@@ -4,7 +4,7 @@ import {
     bookingWeekdays,
     getBookingIntervals,
     saveBookingIntervals,
-} from "../controllers/timeslotController";
+} from "../../controllers/timeslotController";
 import "./AdminDashboard.css";
 import "./AdminDaySchedule.css";
 

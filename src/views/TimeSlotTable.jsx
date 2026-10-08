@@ -1,6 +1,6 @@
 // Importerar Material-UI komponenter för tabellen.
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
-import { bookingWeekdays, getBookingIntervals } from "../controllers/timeslotController";
+import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController";
 
 // Dummy-data för dagar och tider.
 // Detta är bara temporärt tills backend kopplas in.

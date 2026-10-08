@@ -1,7 +1,9 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const cors = require('cors');
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import mongoose from 'mongoose';
+import authRoutes from './routes/authRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 dotenv.config();
 
@@ -11,16 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importera och koppla authRoutes
-const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
-//tutatatuata
-// importera o kopplar bookingRoutes////////////////////
-const bookingRoutes = require('./routes/bookingRoutes');
 app.use('/api/bookings', bookingRoutes);
-/////////////////////////////////////////////////////////
-
 
 // Test-route
 app.get('/', (req, res) => {
@@ -41,4 +36,3 @@ mongoose
   .catch((err) => {
     console.error('Fel vid anslutning till MongoDB:', err.message);
   });
-
