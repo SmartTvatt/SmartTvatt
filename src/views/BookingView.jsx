@@ -2,10 +2,10 @@ import { Box, Typography } from "@mui/material";
 import { useState } from "react";
 
 // Importera komponenterna
-import BookingInfoCard from "../components/BookingInfoCard";
-import TimeSlotTable from "../components/TimeSlotTable";
-import BookingActionButtons from "../components/BookingActionButtons";
-import BookingDialog from "../components/BookingDialog";
+import BookingInfoCard from "./BookingInfoCard.jsx";
+import TimeSlotTable from "./TimeSlotTable.jsx";
+import BookingActionButtons from "./BookingActionButtons.jsx";
+import BookingDialog from "./BookingDialog.jsx";
 
 // Själva vyn för bokningssidan.
 export default function BookingView() {

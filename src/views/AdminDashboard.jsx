@@ -5,7 +5,7 @@ import {
     bookingWeekdays,
     getBookingIntervals,
     saveBookingIntervals,
-} from "../controllers/timeslotController";
+} from "../../controllers/timeslotController";
 
 export default function AdminDashboard() {
     const [intervals, setIntervals] = useState(getBookingIntervals);
@@ -175,4 +175,3 @@ export default function AdminDashboard() {
         </main>
     );
 }
-

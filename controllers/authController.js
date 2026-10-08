@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import crypto from 'node:crypto';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 // Hjälpfunktion för att generera JWT-token.
 const generateToken = (id) => {
@@ -12,7 +12,7 @@ const generateToken = (id) => {
 // @desc, Registrera ny användare
 // @route, POST /api/auth/register
 // @access, Public
-exports.registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     const { name, email, password, apartmentNumber, role } = req.body;
 
@@ -51,7 +51,7 @@ exports.registerUser = async (req, res) => {
 // @desc, Logga in användare
 // @route, POST /api/auth/login
 // @access, Public
-exports.loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -79,7 +79,7 @@ exports.loginUser = async (req, res) => {
 // @desc, Begär återställning av lösenord (Glömt lösenord)
 // @route, POST /api/auth/forgot-password
 // @access, Public
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -106,7 +106,7 @@ exports.forgotPassword = async (req, res) => {
 // @desc, Sätt nytt lösenord med token
 // @route, PUT /api/auth/reset-password/:resetToken
 // @access, Public
-exports.resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   try {
     // Hasha token som skickas i URL:en för att jämföra med databasen.
     const resetPasswordToken = crypto
