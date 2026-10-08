@@ -1,8 +1,39 @@
 
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { useState } from "react";
 import './Dashboard.css'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+    const navigate = useNavigate();
+    const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [showNextStep, setShowNextStep] = useState(false);
+
+    // Tillfällig presentationsdata tills dashboarden hämtar bokningen från API:t.
+    const activeBooking = {
+        weekday: "FREDAG",
+        dayOfMonth: "18",
+        month: "SEP",
+        dateLabel: "Fredag 18 sep",
+        time: "16:00–20:00",
+        location: "Tvättstuga 1 · Gjutargatan 26",
+    };
+
+    // Att bekräfta i dialogen är ännu inte samma sak som att spara en avbokning.
+    const handleCancelConfirmation = () => {
+        setShowNextStep(true);
+    };
+
+    const handleCloseCancelDialog = () => {
+        setCancelDialogOpen(false);
+        setShowNextStep(false);
+    };
+
+    const handleGoToBooking = () => {
+        handleCloseCancelDialog();
+        navigate("/boka");
+    };
+
     return (
         <div className="dashboard-shell">
             <header className="dashboard-header">
@@ -50,13 +81,13 @@ export default function Dashboard() {
                         </div>
                         <div className="booking-display">
                             <div className="booking-date-box">
-                                <span className="booking-day">FREDAG</span>
-                                <strong>18</strong>
-                                <span>SEP</span>
+                                <span className="booking-day">{activeBooking.weekday}</span>
+                                <strong>{activeBooking.dayOfMonth}</strong>
+                                <span>{activeBooking.month}</span>
                             </div>
                             <div className="booking-details">
-                                <h3>16:00 <span>–</span> 20:00</h3>
-                                <p>Tvättstuga 1 <span className="detail-divider">·</span> Gjutargatan 26</p>
+                                <h3>{activeBooking.time}</h3>
+                                <p>{activeBooking.location}</p>
                             </div>
                             <span className="booking-arrow">→</span>
                         </div>
@@ -75,7 +106,11 @@ export default function Dashboard() {
                                 <span><strong>Boka tid</strong><small>Hitta en ledig tid</small></span>
                                 <span className="action-chevron">›</span>
                             </Link>
-                            <button className="action-button action-danger">
+                            <button
+                                type="button"
+                                className="action-button action-danger"
+                                onClick={() => setCancelDialogOpen(true)}
+                            >
                                 <span className="action-icon">×</span>
                                 <span><strong>Avboka tid</strong><small>Ändra din bokning</small></span>
                                 <span className="action-chevron">›</span>
@@ -116,6 +151,75 @@ export default function Dashboard() {
                     </div>
                 </section>
             </main>
+
+            {/* Dialogen håller hela avbokningsflödet kvar ovanpå dashboarden. */}
+            <Dialog
+                open={cancelDialogOpen}
+                onClose={handleCloseCancelDialog}
+                aria-labelledby="cancel-booking-title"
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle id="cancel-booking-title">
+                    {showNextStep ? "Vad vill du göra härnäst?" : "Avboka din tvättid?"}
+                </DialogTitle>
+
+                <DialogContent>
+                    {showNextStep ? (
+                        <>
+                            {/* Förklarar att gränssnittet ännu inte kan spara avbokningen. */}
+                            <Alert severity="info" role="status" sx={{ mb: 2 }}>
+                                Du har valt att avboka, men ändringen är inte sparad eftersom
+                                avbokningen ännu inte är kopplad till systemet.
+                            </Alert>
+                            <Typography>
+                                Du kan gå vidare till bokningssidan eller stanna på dashboarden.
+                            </Typography>
+                        </>
+                    ) : (
+                        <>
+                            <Typography sx={{ mb: 2 }}>
+                                Det här är din nuvarande bokning:
+                            </Typography>
+                            <Typography component="p" variant="body1">
+                                {activeBooking.dateLabel}, {activeBooking.time}
+                            </Typography>
+                            <Typography component="p" variant="body2" sx={{ mt: 0.5 }}>
+                                {activeBooking.location}
+                            </Typography>
+                            <Typography sx={{ mt: 2 }}>
+                                Vill du fortsätta med avbokningen?
+                            </Typography>
+                        </>
+                    )}
+                </DialogContent>
+
+                <DialogActions sx={{ p: 2, flexWrap: "wrap" }}>
+                    {showNextStep ? (
+                        <>
+                            <Button onClick={handleCloseCancelDialog}>
+                                Till dashboarden
+                            </Button>
+                            <Button variant="contained" onClick={handleGoToBooking}>
+                                Till bokningssidan
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button onClick={handleCloseCancelDialog}>
+                                Behåll bokningen
+                            </Button>
+                            <Button
+                                color="error"
+                                variant="contained"
+                                onClick={handleCancelConfirmation}
+                            >
+                                Ja, avboka
+                            </Button>
+                        </>
+                    )}
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }
