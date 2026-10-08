@@ -284,6 +284,7 @@
   border: 1px solid transparent;
   border-radius: 10px;
   text-align: left;
+  text-decoration: none;
   font: inherit;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
@@ -531,4 +532,3 @@
     font-size: 22px;
   }
 }
-
