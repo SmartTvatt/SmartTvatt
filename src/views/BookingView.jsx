@@ -1,6 +1,8 @@
 import { Alert, Box, Typography } from "@mui/material";
 import { useState } from "react";
 
+import "./Booking.css";
+
 // Importera komponenterna
 import BookingInfoCard from "./BookingInfoCard.jsx";
 import TimeSlotTable from "./TimeSlotTable.jsx";
@@ -43,10 +45,16 @@ export default function BookingView({ booking = null, bookedSlots = [] }) {
   };
 
   return (
-    <Box sx={{ padding: "2rem" }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Boka tid
-      </Typography>
+    <Box component="main" className="booking-page">
+      <header className="booking-page__header">
+        <p className="booking-page__eyebrow">BOKNING</p>
+        <Typography component="h1" variant="h4" className="booking-page__title">
+          Boka tid
+        </Typography>
+        <Typography className="booking-page__intro">
+          Välj en ledig tid i schemat för att komma igång.
+        </Typography>
+      </header>
 
       {/* Berättar tydligt att bekräftelsen ännu inte sparar en bokning. */}
       {bookingNotice && (

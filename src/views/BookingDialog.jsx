@@ -7,7 +7,13 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }
 
   return (
     // Dialog visas endast när "open" är true.
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      className="booking-dialog"
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="xs"
+    >
       
       {/* Titel för popupen. */}
       <DialogTitle>
@@ -31,6 +37,7 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }
 
         {/* Boka-knappen kommer senare kopplas till backend. */}
         <Button
+          className="booking-dialog__confirm"
           variant="contained"
           color="primary"
           disabled={!canConfirm}

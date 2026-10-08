@@ -154,6 +154,7 @@ export default function Dashboard() {
 
             {/* Dialogen håller hela avbokningsflödet kvar ovanpå dashboarden. */}
             <Dialog
+                className="cancel-dialog"
                 open={cancelDialogOpen}
                 onClose={handleCloseCancelDialog}
                 aria-labelledby="cancel-booking-title"
@@ -197,19 +198,20 @@ export default function Dashboard() {
                 <DialogActions sx={{ p: 2, flexWrap: "wrap" }}>
                     {showNextStep ? (
                         <>
-                            <Button onClick={handleCloseCancelDialog}>
+                            <Button className="cancel-dialog__secondary" onClick={handleCloseCancelDialog}>
                                 Till dashboarden
                             </Button>
-                            <Button variant="contained" onClick={handleGoToBooking}>
+                            <Button className="cancel-dialog__primary" variant="contained" onClick={handleGoToBooking}>
                                 Till bokningssidan
                             </Button>
                         </>
                     ) : (
                         <>
-                            <Button onClick={handleCloseCancelDialog}>
+                            <Button className="cancel-dialog__secondary" onClick={handleCloseCancelDialog}>
                                 Behåll bokningen
                             </Button>
                             <Button
+                                className="cancel-dialog__danger"
                                 color="error"
                                 variant="contained"
                                 onClick={handleCancelConfirmation}

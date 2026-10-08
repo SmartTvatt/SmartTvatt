@@ -355,6 +355,52 @@
   background: #ffe0d6;
 }
 
+.cancel-dialog .MuiDialog-paper
+{
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.cancel-dialog .MuiDialogTitle-root
+{
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.cancel-dialog .cancel-dialog__primary.MuiButton-root
+{
+  border-radius: 9px;
+  background: var(--green);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.cancel-dialog .cancel-dialog__primary.MuiButton-root:hover
+{
+  background: var(--green-dark);
+}
+
+.cancel-dialog .cancel-dialog__secondary.MuiButton-root
+{
+  color: var(--green-dark);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.cancel-dialog .cancel-dialog__danger.MuiButton-root
+{
+  border-radius: 9px;
+  background: var(--coral-ink);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.cancel-dialog .cancel-dialog__danger.MuiButton-root:hover
+{
+  background: #963c2b;
+}
+
 .action-neutral 
 {
   background: #f2f7f7;

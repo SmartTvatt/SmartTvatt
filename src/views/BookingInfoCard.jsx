@@ -11,7 +11,7 @@ export default function BookingInfoCard({ booking = null }) {
 
   return (
     // Card ger en snygg vit ruta med skugga.
-    <Card sx={{ mb: 3, padding: "0.5rem" }}>
+    <Card>
       {/* CardContent håller texten och ger spacing. */}
       <CardContent>
 

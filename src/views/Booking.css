@@ -1,0 +1,208 @@
+.booking-page {
+  --booking-ink: #182b35;
+  --booking-muted: #6b7d82;
+  --booking-line: #dce8e6;
+  --booking-paper: #fff;
+  --booking-mint: #dff4e9;
+  --booking-green: #17745b;
+  --booking-green-dark: #0f5947;
+  --booking-coral: #fff0eb;
+  --booking-coral-ink: #b24e39;
+  --booking-shadow: 0 16px 40px rgba(29, 63, 57, 0.08);
+
+  box-sizing: border-box;
+  width: min(1120px, calc(100% - 40px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 52px 0 70px;
+  color: var(--booking-ink);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  text-align: left;
+}
+
+.booking-page__header {
+  margin-bottom: 28px;
+}
+
+.booking-page__eyebrow {
+  margin: 0;
+  color: var(--booking-green);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.booking-page__title.MuiTypography-root {
+  margin: 8px 0 0;
+  color: #000;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+}
+
+.booking-page__intro.MuiTypography-root {
+  margin-top: 9px;
+  color: var(--booking-muted);
+  font-size: 14px;
+}
+
+.booking-page .MuiAlert-root {
+  margin-bottom: 20px;
+  border: 1px solid var(--booking-line);
+  border-radius: 12px;
+}
+
+.booking-page .MuiCard-root,
+.booking-page .booking-table-card {
+  overflow: hidden;
+  border: 1px solid var(--booking-line);
+  border-radius: 14px;
+  background: var(--booking-paper);
+  box-shadow: var(--booking-shadow);
+}
+
+.booking-page .MuiCard-root {
+  margin-bottom: 20px;
+  padding: 6px;
+}
+
+.booking-page .MuiCardContent-root {
+  padding: 22px;
+}
+
+.booking-page .MuiCardContent-root:last-child {
+  padding-bottom: 22px;
+}
+
+.booking-page .MuiCardContent-root h2 {
+  margin: 0 0 8px;
+  color: #000;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.booking-page .MuiCardContent-root p {
+  color: var(--booking-muted);
+  font-size: 14px;
+}
+
+.booking-page .booking-table-card {
+  padding: 12px;
+}
+
+.booking-page .booking-table-card .MuiTable-root {
+  border-collapse: separate;
+  border-spacing: 3px;
+}
+
+.booking-page .booking-table-card .MuiTableCell-root {
+  border-bottom: 0;
+  color: var(--booking-ink);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.booking-page .booking-table-card .MuiTableHead-root .MuiTableCell-root {
+  color: var(--booking-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.booking-page .booking-table-card .MuiTableBody-root th {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.booking-page .booking-table-card .MuiTableBody-root td {
+  border-radius: 9px;
+}
+
+.booking-page .slot-button.MuiButton-root {
+  border-radius: 8px;
+  color: var(--booking-green-dark);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: none;
+  transition: filter 150ms ease, transform 150ms ease;
+}
+
+.booking-page .slot-button.MuiButton-root:hover:not(.Mui-disabled) {
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.booking-page .slot-button--available.MuiButton-root {
+  background: var(--booking-mint);
+}
+
+.booking-page .slot-button--own.MuiButton-root {
+  background: #c6e8d8;
+}
+
+.booking-page .slot-button--booked.MuiButton-root {
+  background: var(--booking-coral);
+  color: var(--booking-coral-ink);
+}
+
+.booking-page .slot-button--unavailable.MuiButton-root {
+  background: #eef3f1;
+  color: var(--booking-muted);
+}
+
+.booking-page .slot-button.Mui-disabled {
+  color: inherit;
+  opacity: 0.82;
+}
+
+.booking-page .booking-legend {
+  gap: 8px 16px;
+  margin: 16px 4px 4px;
+}
+
+.booking-page .booking-legend__item {
+  color: var(--booking-muted);
+  font-size: 12px;
+}
+
+.booking-page .booking-legend__swatch {
+  border: 1px solid rgba(24, 43, 53, 0.12);
+  border-radius: 5px;
+}
+
+.booking-dialog .MuiDialog-paper {
+  border: 1px solid var(--booking-line);
+  border-radius: 16px;
+  box-shadow: var(--booking-shadow);
+}
+
+.booking-dialog {
+  --booking-ink: #182b35;
+  --booking-muted: #6b7d82;
+  --booking-line: #dce8e6;
+  --booking-green: #17745b;
+  --booking-green-dark: #0f5947;
+  --booking-shadow: 0 16px 40px rgba(29, 63, 57, 0.08);
+}
+
+.booking-dialog .MuiDialogTitle-root {
+  color: var(--booking-ink);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-weight: 800;
+}
+
+.booking-dialog .MuiDialogContent-root {
+  color: var(--booking-muted);
+}
+
+.booking-dialog .booking-dialog__confirm.MuiButton-root {
+  border-radius: 9px;
+  background: var(--booking-green);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.booking-dialog .booking-dialog__confirm.MuiButton-root:hover {
+  background: var(--booking-green-dark);
+}
