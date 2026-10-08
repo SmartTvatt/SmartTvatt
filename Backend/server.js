@@ -15,6 +15,13 @@ app.use(express.json());
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+//tutatatuata
+// importera o kopplar bookingRoutes////////////////////
+const bookingRoutes = require('./routes/bookingRoutes');
+app.use('/api/bookings', bookingRoutes);
+/////////////////////////////////////////////////////////
+
+
 // Test-route
 app.get('/', (req, res) => {
   res.send('SmartTvätt API is running...');
@@ -34,3 +41,4 @@ mongoose
   .catch((err) => {
     console.error('Fel vid anslutning till MongoDB:', err.message);
   });
+
