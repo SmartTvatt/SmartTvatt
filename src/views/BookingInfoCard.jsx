@@ -1,17 +1,14 @@
 // Importerar Material-UI komponenter.
 import { Card, CardContent, Typography } from "@mui/material";
 
-// Dummy-data för användarens bokning.
-// Detta kommer senare från backend via controller → model → API.
-// Just nu är det bara en placeholder.
-const dummyBooking = {
-  day: "Onsdag",
-  time: "14:00"
-};
-
 // Själva komponenten som visar bokningsinformationen.
 // Den exporteras så BookingView kan importera den.
-export default function BookingInfoCard() {
+// `booking` kommer från den komponent som använder kortet.
+// Standardvärdet gör att kortet visar ett tydligt tomt läge innan API-kopplingen finns.
+export default function BookingInfoCard({ booking = null }) {
+  // Samma kort kan visa både en aktiv bokning och information om att ingen finns.
+  const hasActiveBooking = booking !== null;
+
   return (
     // Card ger en snygg vit ruta med skugga.
     <Card sx={{ mb: 3, padding: "0.5rem" }}>
@@ -19,15 +16,27 @@ export default function BookingInfoCard() {
       <CardContent>
 
         {/* Titel för sektionen. */}
-        <Typography variant="h6" sx={{ mb: 1 }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 1 }}>
           Din bokning
         </Typography>
 
-        {/* Visar själva bokningsinformationen. */}
-        <Typography variant="body1">
-          Du har bokat: {dummyBooking.day} kl {dummyBooking.time}
-        </Typography>
-
+        {hasActiveBooking ? (
+          <>
+            {/* Uppgifterna kommer från användande komponent, inte från hårdkodad exempeldata. */}
+            {/* Visar själva bokningsinformationen. */}
+            <Typography variant="body1">
+              Du har bokat: {booking.day} kl {booking.time}
+            </Typography>
+          </>
+        ) : (
+          <>
+            {/* `role="status"` låter även hjälpmedel uppmärksamma det tomma läget. */}
+            {/* Visar att användaren saknar en aktiv bokning. */}
+            <Typography variant="body1" role="status">
+              Du har ingen aktiv bokning just nu.
+            </Typography>
+          </>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,7 +1,10 @@
 // Importerar Material-UI komponenter för dialogen.
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from "@mui/material";
 
-export default function BookingDialog({ open, onClose, selectedSlot }) {
+export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }) {
+  // En bokning kan bara bekräftas när användaren faktiskt har valt en tid.
+  const canConfirm = selectedSlot !== null;
+
   return (
     // Dialog visas endast när "open" är true.
     <Dialog open={open} onClose={onClose}>
@@ -27,7 +30,12 @@ export default function BookingDialog({ open, onClose, selectedSlot }) {
         </Button>
 
         {/* Boka-knappen kommer senare kopplas till backend. */}
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={!canConfirm}
+          onClick={() => onConfirm(selectedSlot)}
+        >
           Boka
         </Button>
       </DialogActions>
