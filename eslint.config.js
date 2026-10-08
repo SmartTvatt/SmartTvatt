@@ -22,7 +22,8 @@ export default defineConfig([
     files: [
       'server.js',
       'controllers/authController.js',
-      'models/User.js',
+      'middleware/**/*.js',
+      'models/**/*.js',
       'routes/**/*.js',
     ],
     languageOptions: {
