@@ -30,7 +30,8 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        login(data.token, data.user);
+        //login(data.token, data.user); // det ska vara omvänd  
+        login(data.user, data.token); 
         navigate('/dashboard');
       } else {
         setErrorMessage(data.message || 'Felaktiga inloggningsuppgifter');
