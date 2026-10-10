@@ -5,7 +5,7 @@ import BookingView from "./BookingView.jsx";
 import Dashboard from "./Dashboard.jsx";
 import Login from "./Login.jsx";
 import Register from "./Register.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { ProtectedRoute } from "../context/ProtectedRoute.jsx";
 
 export default function App() {
   return (
