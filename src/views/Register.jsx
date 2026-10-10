@@ -6,6 +6,10 @@ export default function Register() {
   // Hook för att kunna navigera tillbaka till /login
   const navigate = useNavigate();
 
+  // State för felmeddelanden
+  const [errorMessage, setErrorMessage] = useState('');
+
+
   // State-objekt för alla fyra formulärfält
   const [formData, setFormData] = useState({
     name: '',
@@ -23,11 +27,32 @@ export default function Register() {
   };
 
   // Funktion som körs när registreringsformuläret skickas
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Förhindrar att sidan laddas om
-    navigate('/');
-    //alert(`Registreringsförsök för: ${formData.name}`);
-    // Här kopplas backend-anropet (POST /api/auth/register) på senare
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage(''); // Rensa tidigare felmeddelanden
+    
+    const { name, email, password, apartmentNumber } = formData;
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, apartmentNumber }),
+      });
+  
+      const text = await res.text();
+      const data = text ? JSON.parse(text) : {};
+  
+      if (!res.ok) {
+        throw new Error(data.message || 'Det gick inte att skapa kontot');
+      }
+  
+      // Sparar token och slussar till inloggning
+      localStorage.setItem('token', data.token);
+      navigate('/login');
+    } catch (err) {
+      setErrorMessage(err.message); // Sätter felmeddelandet i state
+    }
   };
 
   return (
@@ -75,6 +100,21 @@ export default function Register() {
 
         {/* Registreringsformulär */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+        {/* Error meddelande om registering misslyckas */}  
+        {errorMessage && (
+          <div style={{
+          padding: '10px 12px',
+          borderRadius: '8px',
+          backgroundColor: '#FEE2E2',
+          color: '#991B1B',
+          fontSize: '13px',
+          marginBottom: '12px',
+          border: '1px solid #FCA5A5'
+        }}>
+          {errorMessage}
+        </div>
+      )}
           
           {/* Namn-fält */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>

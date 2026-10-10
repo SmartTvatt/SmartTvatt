@@ -9,13 +9,42 @@ export default function Login() {
   // State-variabler för att spara det användaren skriver i formuläret
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Funktion som körs när inloggningsformuläret skickas
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Förhindrar standardbeteendet att sidan laddas om
-    navigate('/');
-    //alert(`Inloggningsförsök med: ${email}`);
-    // Här kopplas backend-anropet (POST /api/auth/login) på senare
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      // Läs text först för att undvika JSON-krasch vid tomma svar
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : {};
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Felaktig e-postadress eller lösenord');
+      }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('role', data.user.role);
+
+      if (data.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      setErrorMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,6 +89,21 @@ export default function Login() {
           <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#6B7280' }}>Din tvättstuga, enklare</p>
           <h2 style={{ fontSize: '18px', margin: '0', color: '#111827' }}>Välkommen tillbaka</h2>
         </div>
+
+       {/* Visar ett rött felmeddelande om inloggningen misslyckades. */}
+        {errorMessage && (
+          <div style={{
+            padding: '10px 14px',
+            backgroundColor: '#FEE2E2',
+            color: '#DC2626',
+            borderRadius: '10px',
+            fontSize: '13px',
+            marginBottom: '16px',
+            textAlign: 'center'
+          }}>
+            {errorMessage}
+          </div>
+        )}
 
         {/* Inloggningsformulär */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -113,6 +157,7 @@ export default function Login() {
           {/* Logga in-knapp */}
           <button
             type="submit"
+            disabled={loading}
             style={{
               marginTop: '8px',
               padding: '12px',
@@ -125,7 +170,7 @@ export default function Login() {
               cursor: 'pointer'
             }}
           >
-            Logga in
+            {loading ? 'Loggar in...' : 'Logga in'}
           </button>
         </form>
 

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 // Hjälpfunktion för att generera JWT-token.
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET || 'fallback_secret', {
     expiresIn: '30d',
   });
 };
@@ -14,7 +14,11 @@ const generateToken = (id) => {
 // @access, Public
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, apartmentNumber, role } = req.body;
+    const { name, 
+            email, 
+            password, 
+            apartmentNumber, 
+            role } = req.body;
 
     // Kontrollera om användaren redan finns
     const userExists = await User.findOne({ email });
@@ -28,17 +32,19 @@ export const registerUser = async (req, res) => {
       email,
       password,
       apartmentNumber,
-      role: role || 'Boende',
+      role: role || 'boende',
     });
 
     if (user) {
       res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        apartmentNumber: user.apartmentNumber,
-        role: user.role,
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          apartmentNumber: user.apartmentNumber,
+          role: user.role,
+        },
       });
     } else {
       res.status(400).json({ message: 'Ogiltig användardata' });
@@ -61,12 +67,14 @@ export const loginUser = async (req, res) => {
     // Verifiera lösenord med matchPassword-metoden från User.js.
     if (user && (await user.matchPassword(password))) {
       res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        apartmentNumber: user.apartmentNumber,
-        role: user.role,
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          apartmentNumber: user.apartmentNumber,
+          role: user.role,
+        },
       });
     } else {
       res.status(401).json({ message: 'Felaktig e-post eller lösenord' });
@@ -133,7 +141,7 @@ export const resetPassword = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Lösenordet har uppdaterats! Du kan nu logga in.',
-      token: generateToken(user._id),
+      token: generateToken(user._id, user.role),
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

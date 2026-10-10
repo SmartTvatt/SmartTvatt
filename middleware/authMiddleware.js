@@ -1,25 +1,56 @@
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
-export default function authMiddleware(req, res, next) {
-  const authorization = req.headers.authorization;
+// Middleware för att skydda rutter som kräver inloggning
+export const protect = async (req, res, next) => {
+  let token;
 
-  if (!authorization?.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Autentisering krävs' });
-  }
+  // Kontrollera om "Authorization: Bearer <token>" finns i request headers
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      // Hämta själva token-strängen
+      token = req.headers.authorization.split(' ')[1];
 
-  try {
-    const payload = jwt.verify(
-      authorization.slice('Bearer '.length),
-      process.env.JWT_SECRET || 'fallback_secret'
-    );
+      // Verifiera token med din JWT_SECRET
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || 'fallback_secret'
+      );
 
-    if (typeof payload === 'string' || typeof payload.id !== 'string') {
-      return res.status(401).json({ message: 'Ogiltig autentiseringstoken' });
+      // Hämta användaren från databasen utan lösenordet och fäst på req.user
+      req.user = await User.findById(decoded.id).select('-password');
+
+      if (!req.user) {
+        return res
+          .status(401)
+          .json({ message: 'Inte behörig, användaren finns inte längre' });
+      }
+
+      next(); // Fortsätt till routen/controllern
+    } catch (error) {
+      console.error('JWT Verifieringsfel:', error.message);
+      return res.status(401).json({ message: 'Inte behörig, ogiltig token' });
     }
-
-    req.user = { id: payload.id };
-    return next();
-  } catch {
-    return res.status(401).json({ message: 'Ogiltig eller utgången autentiseringstoken' });
   }
-}
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: 'Inte behörig, token saknas i anropet' });
+  }
+};
+
+// Middleware för att begränsa rutter till specifika roller (t.ex. 'admin')
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: `Rollen '${req.user.role}' har inte behörighet att utföra denna åtgärd`,
+      });
+    }
+    next();
+  };
+};
