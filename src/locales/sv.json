@@ -1,0 +1,29 @@
+{
+    "common": {
+      "appName": "SmartTvätt",
+      "tagline": "Din tvättstuga, enklare",
+      "loading": "Laddar...",
+      "logout": "Logga ut"
+    },
+    "auth": {
+      "welcomeBack": "Välkommen tillbaka",
+      "createAccount": "Skapa ditt konto",
+      "emailLabel": "E-postadress",
+      "emailPlaceholder": "namn@brf.se",
+      "passwordLabel": "Lösenord",
+      "confirmPasswordLabel": "Bekräfta lösenord",
+      "nameLabel": "Namn",
+      "loginBtn": "Logga in",
+      "loggingIn": "Loggar in...",
+      "registerBtn": "Skapa konto",
+      "noAccount": "Inget konto ännu?",
+      "hasAccount": "Har du redan ett konto?",
+      "registerHere": "Skapa konto här",
+      "loginHere": "Logga in här"
+    },
+    "nav": {
+      "dashboard": "Bokning",
+      "admin": "Admin",
+      "profile": "Profil"
+    }
+  }
