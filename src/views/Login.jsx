@@ -43,11 +43,11 @@ export default function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
+      
       const data = await res.json();
 
       if (res.ok) {
-        login(data.token, data.user);
+        login(data.user, data.token);
 
         // Omdirigera baserat på roll
         if (data.user.role === 'admin') {
