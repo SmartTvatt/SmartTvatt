@@ -1,3 +1,4 @@
+/* Samlar adminsidans färger och grundlayout för både schema och utskicksformulär. */
 .admin-page {
   --admin-ink: #182b35;
   --admin-muted: #6b7d82;
@@ -61,7 +62,8 @@
 }
 
 .interval-panel,
-.add-interval-panel {
+.add-interval-panel,
+.message-panel {
   border: 1px solid var(--admin-line);
   border-radius: 8px;
   background: var(--admin-paper);
@@ -237,6 +239,91 @@
   font-size: 13px;
 }
 
+.message-panel {
+  margin-top: 20px;
+}
+
+.message-panel-heading {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--admin-line);
+}
+
+.message-panel-heading h2 {
+  margin: 0;
+  color: black;
+  font-size: 18px;
+}
+
+.message-panel-heading p {
+  margin: 8px 0 0;
+  color: var(--admin-muted);
+  font-size: 14px;
+}
+
+/* Två kolumner på bred skärm; meddelandetexten får använda hela formulärbredden. */
+.message-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr);
+  align-items: end;
+  gap: 14px;
+  padding: 22px 24px;
+}
+
+.message-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--admin-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.message-form input,
+.message-form select,
+.message-form textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--admin-line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--admin-ink);
+  font: inherit;
+}
+
+.message-form textarea {
+  resize: vertical;
+}
+
+.message-form input:focus,
+.message-form select:focus,
+.message-form textarea:focus {
+  border-color: var(--admin-green);
+  outline: 2px solid #dff4e9;
+}
+
+.message-body-field {
+  grid-column: 1 / -1;
+}
+
+.message-form button:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.message-feedback {
+  margin: 0;
+  padding: 0 24px 20px;
+  font-size: 13px;
+}
+
+.message-feedback.error {
+  color: #a84432;
+}
+
+.message-feedback.success {
+  color: var(--admin-green-dark);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -247,6 +334,7 @@
   clip-path: inset(50%);
 }
 
+/* Stapla formulärfält och minska sidmarginalerna på små skärmar. */
 @media (max-width: 640px) {
   .admin-page {
     padding: 28px 16px 44px;
@@ -278,11 +366,25 @@
     padding: 20px 16px;
   }
 
+  .message-panel-heading,
+  .message-form {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
   .add-interval-form {
     grid-template-columns: 1fr 1fr;
   }
 
   .add-interval-button {
     grid-column: 1 / -1;
+  }
+
+  .message-form {
+    grid-template-columns: 1fr;
+  }
+
+  .message-body-field {
+    grid-column: auto;
   }
 }

@@ -1,6 +1,7 @@
 /* global process */
 import mongoose from 'mongoose';
 
+// Håller appen borta från ett fungerande läge om databasen inte går att nå.
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
 
+  // Låt i18next uppdatera alla komponenter som använder översättningar.
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };

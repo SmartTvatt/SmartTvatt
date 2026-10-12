@@ -4,6 +4,7 @@ import User from '../models/User.js';
 
 // Hjälpfunktion för att generera JWT-token.
 const generateToken = (id, role) => {
+  // Tokenen signeras med serverns hemlighet och innehåller användarens id och roll.
   return jwt.sign({ id, role }, process.env.JWT_SECRET || 'fallback_secret', {
     expiresIn: '30d',
   });
@@ -14,11 +15,7 @@ const generateToken = (id, role) => {
 // @access, Public
 export const registerUser = async (req, res) => {
   try {
-    const { name, 
-            email, 
-            password, 
-            apartmentNumber, 
-            role } = req.body;
+    const { name, email, password, apartmentNumber } = req.body;
 
     // Kontrollera om användaren redan finns
     const userExists = await User.findOne({ email });
@@ -26,13 +23,14 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'En användare med denna e-post finns redan' });
     }
 
-    // Skapa ny användare (lösenordet hashas automatiskt i User.js pre-save hook).
+    // Registrering skapar alltid ett boendekonto; adminrollen tilldelas separat.
+    // Lösenordet hashas automatiskt av User-modellens pre-save-hook.
     const user = await User.create({
       name,
       email,
       password,
       apartmentNumber,
-      role: role || 'boende',
+      role: 'boende',
     });
 
     if (user) {
@@ -61,11 +59,12 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Hitta användaren via e-post.
+    // Slå upp användaren och jämför lösenordet mot den hash som sparats i databasen.
     const user = await User.findOne({ email });
 
     // Verifiera lösenord med matchPassword-metoden från User.js.
     if (user && (await user.matchPassword(password))) {
+      // Skicka bara profiluppgifter som klienten behöver tillsammans med JWT-tokenen.
       res.json({
         token: generateToken(user._id, user.role),
         user: {

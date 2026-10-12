@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+// Beskriver bokningens ägare, tid, plats och status i MongoDB.
 const bookingSchema = new mongoose.Schema({
   user: {
     type: String,

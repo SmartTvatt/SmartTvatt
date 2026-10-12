@@ -10,8 +10,11 @@ export default function Dashboard() {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [showNextStep, setShowNextStep] = useState(false);
 
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext);
     const [booking, setBooking] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [messagesLoading, setMessagesLoading] = useState(true);
+    const [messagesError, setMessagesError] = useState("");
 
     // Hämtar den inloggades aktiva bokning när sidan öppnas
     useEffect(() => {
@@ -21,6 +24,22 @@ export default function Dashboard() {
             .then((res) => (res.ok ? res.json() : null))
             .then((data) => setBooking(data));
         }, [token]);
+
+    // Inkorgen hämtas med JWT så backend kan begränsa svaret till den inloggade boende.
+    useEffect(() => {
+        if (!token) return;
+
+        fetch("/api/messages/mine", {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Inkorgen kunde inte hämtas.");
+                setMessages(data);
+            })
+            .catch((error) => setMessagesError(error.message))
+            .finally(() => setMessagesLoading(false));
+    }, [token]);
     
     // Gör om bokningen från databasen till det kortet visar
 const activeBooking = booking
@@ -67,8 +86,8 @@ const activeBooking = booking
                         <span>Gjutargatan 26</span>
                     </div>
                     <div className="profile-chip">
-                        <span className="avatar">U</span>
-                        <span>Username</span>
+                        <span className="avatar">{user?.name?.[0] || "B"}</span>
+                        <span>{user?.name || "Boende"}</span>
                     </div>
                     <button className="logout-button">Logga ut</button>
                 </div>
@@ -79,7 +98,7 @@ const activeBooking = booking
                 <section className="welcome-section">
                     <div>
                         <p className="eyebrow">ÖVERSIKT</p>
-                        <h1>Hej, Username</h1>
+                        <h1>Hej, {user?.name || "boende"}</h1>
                         <p className="welcome-copy">Här är det senaste från din tvättstuga.</p>
                     </div>
                     <span className="date-label">Torsdag 25 september 2026</span>
@@ -151,24 +170,31 @@ const activeBooking = booking
                             <p className="eyebrow">UPPDATERINGAR</p>
                             <h2>Inkorg</h2>
                         </div>
-                        <span className="message-count">3 meddelanden</span>
+                        <span className="message-count">{messages.length} meddelanden</span>
                     </div>
                     <div className="message-list">
-                        <article className="message-item unread">
-                            <span className="message-icon">⌁</span>
-                            <div className="message-content">
-                                <div className="message-meta"><p className="message-from">Admin</p><p className="message-time">Idag</p></div>
-                                <p className="message-preview">Underhållsdag tisdag - tvättstugan stänger kl 12.</p>
-                            </div>
-                            <span className="unread-label">NY</span>
-                        </article>
-                        <article className="message-item">
-                            <span className="message-icon system-icon">✓</span>
-                            <div className="message-content">
-                                <div className="message-meta"><p className="message-from">System</p><p className="message-time">18 sep</p></div>
-                                <p className="message-preview">Du har bokat tid fredag 18 sep, 16:00–20:00.</p>
-                            </div>
-                        </article>
+                        {messagesLoading ? (
+                            <p className="inbox-empty">Hämtar meddelanden...</p>
+                        ) : messagesError ? (
+                            <p className="inbox-empty" role="alert">{messagesError}</p>
+                        ) : messages.length ? (
+                            messages.map((message) => (
+                                <article className="message-item" key={message._id}>
+                                    <span className="message-icon">⌁</span>
+                                    <div className="message-content">
+                                        <div className="message-meta">
+                                            <p className="message-from">{message.sender?.name || "Admin"}: {message.subject}</p>
+                                            <p className="message-time">
+                                                {new Date(message.createdAt).toLocaleString("sv-SE", { dateStyle: "medium", timeStyle: "short" })}
+                                            </p>
+                                        </div>
+                                        <p className="message-preview">{message.body}</p>
+                                    </div>
+                                </article>
+                            ))
+                        ) : (
+                            <p className="inbox-empty">Du har inga meddelanden ännu.</p>
+                        )}
                     </div>
                 </section>
             </main>
