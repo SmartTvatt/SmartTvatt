@@ -6,13 +6,14 @@
       "logout": "Logga ut"
     },
     "auth": {
+      "namePlaceholder": "Namn och efternamn",  
       "welcomeBack": "Välkommen tillbaka",
       "createAccount": "Skapa ditt konto",
       "emailLabel": "E-postadress",
       "emailPlaceholder": "namn@brf.se",
       "passwordLabel": "Lösenord",
       "confirmPasswordLabel": "Bekräfta lösenord",
-      "nameLabel": "Namn",
+      "nameLabel": "Förnamn Efternamn",
       "loginBtn": "Logga in",
       "loggingIn": "Loggar in...",
       "registerBtn": "Skapa konto",

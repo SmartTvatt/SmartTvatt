@@ -6,13 +6,14 @@
       "logout": "Log out"
     },
     "auth": {
+      "nameLabel": "First and last name",
+      "namePlaceholder": "First name Last name",
       "welcomeBack": "Welcome back",
       "createAccount": "Create your account",
       "emailLabel": "Email address",
       "emailPlaceholder": "name@brf.com",
       "passwordLabel": "Password",
       "confirmPasswordLabel": "Confirm password",
-      "nameLabel": "Name",
       "loginBtn": "Log in",
       "loggingIn": "Logging in...",
       "registerBtn": "Sign up",
