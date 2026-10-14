@@ -1,3 +1,4 @@
+// Grundschemat delas mellan dagar; avvikelser sparas separat per veckodag i webbläsaren.
 const STORAGE_KEY = "smarttvatt.bookingIntervals";
 const DAY_STORAGE_KEY = "smarttvatt.bookingIntervalsByDay";
 
@@ -19,6 +20,7 @@ const defaultIntervals = [
 
 
 function readDayOverrides() {
+	// Ogiltig eller saknad lagring ska inte hindra sidan från att visa standardschemat.
 	try {
 		const savedOverrides = window.localStorage.getItem(DAY_STORAGE_KEY);
 		if (!savedOverrides) return {};
@@ -33,6 +35,7 @@ function readDayOverrides() {
 }
 
 function isIntervalList(value) {
+	// Kontrollera formen på sparad JSON innan vyerna försöker använda intervallen.
 	return Array.isArray(value) && value.every(
 		(interval) =>
 			typeof interval.id === "number" &&
@@ -42,6 +45,7 @@ function isIntervalList(value) {
 }
 
 export function getBookingIntervals(dayKey) {
+	// En dags egen ändring har företräde framför det gemensamma schemat.
 	if (dayKey) {
 		const dayIntervals = readDayOverrides()[dayKey];
 		if (isIntervalList(dayIntervals)) return dayIntervals;
@@ -61,6 +65,7 @@ export function getBookingIntervals(dayKey) {
 }
 
 export function saveBookingIntervals(intervals, dayKey) {
+	// Utan dayKey uppdateras grundschemat som används på alla dagar utan egen avvikelse.
 	if (dayKey) {
 		const dayOverrides = readDayOverrides();
 		dayOverrides[dayKey] = intervals;

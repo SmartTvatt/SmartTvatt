@@ -5,8 +5,10 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
+  // Byggresultatet är genererat och ska inte lintas som källkod.
   globalIgnores(['dist']),
   {
+    // Dela rekommenderade JavaScript-, React Hooks- och Vite-regler mellan appfilerna.
     files: ['**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
@@ -19,6 +21,7 @@ export default defineConfig([
     },
   },
   {
+    // Backendfiler körs i Node, medan frontendfilerna ovan får webbläsarglobals.
     files: [
       'server.js',
       'controllers/authController.js',

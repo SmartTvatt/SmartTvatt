@@ -83,6 +83,17 @@ Projektet följer en tydlig **MVC-struktur** för att hålla koden ren och struk
 - `src/assets/` – frontendens bilder och andra importerade tillgångar
 - `public/` – statiska tillgångar
 
+## Teknik och dataflöde
+
+- **React** bygger vyerna och håller formulär- och sidtillstånd, till exempel bokning, inkorg och adminutskick.
+- **Vite** startar utvecklingsservern och bygger frontendfilerna snabbt.
+- **Express** tillhandahåller API-rutter och kopplar dem till controllers som hanterar anropens regler.
+- **MongoDB och Mongoose** lagrar användare, bokningar och meddelanden; Mongoose-modeller beskriver dokumentens struktur.
+- **JWT** identifierar inloggade användare. Middleware kontrollerar token och adminroll innan admin-API:er körs.
+- **ESLint** hittar kodstilproblem och vanliga fel med `npm run lint`.
+
+Adminmeddelanden skickas som in-app-meddelanden, inte e-post. Admin-API:et sparar ett meddelande per boende och boendesidan hämtar endast den inloggades meddelanden.
+
 ## API Endpoints
 
 ### Autentisering (`/api/auth`)
@@ -92,9 +103,13 @@ Projektet följer en tydlig **MVC-struktur** för att hålla koden ren och struk
 - `PUT /api/auth/reset-password/:resetToken` – Sätt nytt lösenord
 
 ### Bokningar (`/api/bookings`)
-- `GET /api/bookings?weekStart=ÅÅÅÅ-MM-DD` – Hämta upptagna tider under veckan (Kräver JWT)
-- `GET /api/bookings/mine` – Hämta den inloggades aktiva bokning (Kräver JWT)
-- `POST /api/bookings` – Skapa bokning med datum, tid och plats (Kräver JWT)
-- `DELETE /api/bookings/:id` – Avboka en egen aktiv bokning (Kräver JWT)
+- `GET /api/bookings` – Hämta alla bokningar / lediga tider
+- `POST /api/bookings` – Skapa ny tvättbokning (Kräver JWT)
+- `DELETE /api/bookings/:id` – Avboka tvättid (Kräver JWT)
 
-Bokningar sparas i MongoDB med status `aktiv` eller `avbokad`. En aktiv tid kan bara bokas av en person, och varje användare kan ha högst en aktiv bokning. Bokningsvyn visar en vecka i taget så att varje vald tid kopplas till ett exakt datum.
+### Admin (`/api/admin`)
+- `GET /api/admin/users` – Hämta användare (Kräver admin-JWT)
+- `POST /api/admin/messages` – Skicka meddelande till en boende eller alla boende (Kräver admin-JWT)
+
+### Meddelanden (`/api/messages`)
+- `GET /api/messages/mine` – Hämta den inloggades meddelanden (Kräver JWT)

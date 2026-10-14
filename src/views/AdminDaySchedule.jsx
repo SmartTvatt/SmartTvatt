@@ -9,6 +9,7 @@ import "./AdminDashboard.css";
 import "./AdminDaySchedule.css";
 
 export default function AdminDaySchedule() {
+    // URL-parametern avgör vilken veckodags lokala schema som ska visas.
     const { day: dayKey } = useParams();
     const day = bookingWeekdays.find((weekday) => weekday.key === dayKey);
 
@@ -25,6 +26,7 @@ export default function AdminDaySchedule() {
 }
 
 function DaySchedule({ day }) {
+    // dayKey skickas vidare till localStorage så varje dag kan ha egna avvikelser.
     const [intervals, setIntervals] = useState(() => getBookingIntervals(day.key));
     const [newInterval, setNewInterval] = useState({ start: "08:00", end: "12:00" });
     const [formError, setFormError] = useState("");
@@ -40,6 +42,7 @@ function DaySchedule({ day }) {
     function addInterval(event) {
         event.preventDefault();
 
+        // Hindra tomma tidsintervall och överlapp innan schemat sparas.
         if (newInterval.start >= newInterval.end) {
             setFormError("Sluttiden måste vara senare än starttiden.");
             return;
