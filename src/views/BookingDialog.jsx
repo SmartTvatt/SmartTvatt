@@ -1,9 +1,10 @@
 // Importerar Material-UI komponenter för dialogen.
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from "@mui/material";
+import { formatLongDate } from "./bookingDateUtils.js";
 
-export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }) {
+export default function BookingDialog({ open, onClose, onConfirm, selectedSlot, submitting = false }) {
   // En bokning kan bara bekräftas när användaren faktiskt har valt en tid.
-  const canConfirm = selectedSlot !== null;
+  const canConfirm = selectedSlot !== null && !submitting;
 
   return (
     // Dialog visas endast när "open" är true.
@@ -24,7 +25,9 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }
       <DialogContent>
         {/* Visar vilken tid användaren håller på att boka. */}
         <Typography variant="body1">
-          Vill du boka tiden: {selectedSlot ? `${selectedSlot.day} kl ${selectedSlot.time}` : "Ingen tid vald"}
+          Vill du boka tiden: {selectedSlot
+            ? `${formatLongDate(selectedSlot.date)} kl ${selectedSlot.time}`
+            : "Ingen tid vald"}
         </Typography>
       </DialogContent>
 
@@ -35,7 +38,6 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }
           Avbryt
         </Button>
 
-        {/* Boka-knappen kommer senare kopplas till backend. */}
         <Button
           className="booking-dialog__confirm"
           variant="contained"
@@ -43,7 +45,7 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot }
           disabled={!canConfirm}
           onClick={() => onConfirm(selectedSlot)}
         >
-          Boka
+          {submitting ? "Sparar..." : "Boka"}
         </Button>
       </DialogActions>
     </Dialog>

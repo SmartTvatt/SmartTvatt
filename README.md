@@ -92,6 +92,9 @@ Projektet följer en tydlig **MVC-struktur** för att hålla koden ren och struk
 - `PUT /api/auth/reset-password/:resetToken` – Sätt nytt lösenord
 
 ### Bokningar (`/api/bookings`)
-- `GET /api/bookings` – Hämta alla bokningar / lediga tider
-- `POST /api/bookings` – Skapa ny tvättbokning (Kräver JWT)
-- `DELETE /api/bookings/:id` – Avboka tvättid (Kräver JWT)
+- `GET /api/bookings?weekStart=ÅÅÅÅ-MM-DD` – Hämta upptagna tider under veckan (Kräver JWT)
+- `GET /api/bookings/mine` – Hämta den inloggades aktiva bokning (Kräver JWT)
+- `POST /api/bookings` – Skapa bokning med datum, tid och plats (Kräver JWT)
+- `DELETE /api/bookings/:id` – Avboka en egen aktiv bokning (Kräver JWT)
+
+Bokningar sparas i MongoDB med status `aktiv` eller `avbokad`. En aktiv tid kan bara bokas av en person, och varje användare kan ha högst en aktiv bokning. Bokningsvyn visar en vecka i taget så att varje vald tid kopplas till ett exakt datum.

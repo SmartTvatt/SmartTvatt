@@ -1,6 +1,7 @@
 // Importerar Material-UI komponenter för tabellen.
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController";
+import { addDays, formatDateOnly } from "./bookingDateUtils.js";
 
 // Dummy-data för dagar och tider.
 // Detta är bara temporärt tills backend kopplas in.
@@ -8,12 +9,16 @@ import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslot
 const days = bookingWeekdays;
 
 // Statusen avgör både cellens färg och om användaren får välja tiden.
-function getSlotStatus(day, time, isAvailable, bookedSlots, userBooking) {
+function getSlotStatus(date, time, isAvailable, bookedSlots, userBooking, disabled) {
+  if (disabled) return "unavailable";
+
   // Om cellen är användarens bokning → gul.
   // Den egna bokningen ska visas särskilt och får inte bokas en gång till.
-  if (userBooking?.day === day && userBooking.time === time) {
+  if (userBooking?.date?.slice(0, 10) === date && userBooking.time === time) {
     return "own";
   }
+
+  if (userBooking) return "unavailable";
 
   // En tid som saknas bland dagens intervall är inte bokningsbar.
   if (!isAvailable) {
@@ -23,10 +28,20 @@ function getSlotStatus(day, time, isAvailable, bookedSlots, userBooking) {
   // Om cellen finns i listan över bokade tider → röd.
   // Upptagna tider går inte att välja även om intervallet finns i schemat.
   const isBooked = bookedSlots.some(
-    (slot) => slot.day === day && slot.time === time
+    (slot) => slot.date?.slice(0, 10) === date && slot.time === time
   );
   if (isBooked) {
     return "booked";
+  }
+
+  const today = formatDateOnly(new Date());
+  if (date < today) return "unavailable";
+  if (date === today) {
+    const [startHour, startMinute] = time.split(/[–-]/)[0].split(":").map(Number);
+    const now = new Date();
+    if (startHour * 60 + startMinute <= now.getHours() * 60 + now.getMinutes()) {
+      return "unavailable";
+    }
   }
 
   // Annars är cellen ledig → grön.
@@ -66,11 +81,14 @@ export default function TimeSlotTable({
   onSlotClick,
   bookedSlots = [],
   userBooking = null,
+  weekStart,
+  disabled = false,
 }) {
   const intervalsByDay = days.map((day) => ({
     ...day,
     intervals: getBookingIntervals(day.key),
   }));
+  const dates = days.map((_, index) => formatDateOnly(addDays(weekStart, index)));
   const intervals = [...new Map(
     intervalsByDay.flatMap(({ intervals: dayIntervals }) =>
       dayIntervals.map((interval) => [`${interval.start}-${interval.end}`, interval])
@@ -91,9 +109,11 @@ export default function TimeSlotTable({
               <TableCell aria-label="Tid"></TableCell>
 
               {/* Renderar varje dag som en kolumnrubrik. */}
-              {days.map((day) => (
+              {days.map((day, index) => (
                 <TableCell key={day.key} align="center" scope="col">
-                  {day.short}
+                  <span>{day.short}</span>
+                  <br />
+                  <span>{dates[index].slice(8, 10)}/{dates[index].slice(5, 7)}</span>
                 </TableCell>
               ))}
             </TableRow>
@@ -111,16 +131,18 @@ export default function TimeSlotTable({
                   <TableCell component="th" scope="row">{time}</TableCell>
 
                   {/* För varje dag skapar vi en cell. */}
-                  {intervalsByDay.map((day) => {
+                  {intervalsByDay.map((day, dayIndex) => {
                     const isAvailable = day.intervals.some(
                       (dayInterval) => dayInterval.start === interval.start && dayInterval.end === interval.end
                     );
+                    const date = dates[dayIndex];
                     const status = getSlotStatus(
-                      day.short,
+                      date,
                       time,
                       isAvailable,
                       bookedSlots,
-                      userBooking
+                      userBooking,
+                      disabled
                     );
                     const canSelect = status === "available";
 
@@ -140,7 +162,7 @@ export default function TimeSlotTable({
                           className={`slot-button slot-button--${status}`}
                           disabled={!canSelect}
                           aria-label={`${day.label} ${time}: ${getStatusLabel(status)}`}
-                          onClick={() => onSlotClick({ day: day.short, time })}
+                          onClick={() => onSlotClick({ date, day: day.short, time })}
                           sx={{
                             width: "100%",
                             minWidth: 72,

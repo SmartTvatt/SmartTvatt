@@ -19,8 +19,18 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    enum: ['aktiv', 'avbokad'],
     default: 'aktiv',
   },
 });
+
+bookingSchema.index(
+  { user: 1 },
+  { unique: true, partialFilterExpression: { status: 'aktiv' } }
+);
+bookingSchema.index(
+  { date: 1, time: 1, location: 1 },
+  { unique: true, partialFilterExpression: { status: 'aktiv' } }
+);
 
 export default mongoose.model('Booking', bookingSchema);

@@ -5,9 +5,11 @@ import connectDB from './db.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js'; ///
+import Booking from './models/Booking.js';
 
 dotenv.config();
-connectDB();
+await connectDB();
+await Booking.init();
 
 const app = express();
 
