@@ -1,6 +1,7 @@
 
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import './Dashboard.css'
 import { Link, useNavigate } from "react-router-dom";
 
@@ -9,15 +10,29 @@ export default function Dashboard() {
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
     const [showNextStep, setShowNextStep] = useState(false);
 
-    // Tillfällig presentationsdata tills dashboarden hämtar bokningen från API:t.
-    const activeBooking = {
-        weekday: "FREDAG",
-        dayOfMonth: "18",
-        month: "SEP",
-        dateLabel: "Fredag 18 sep",
-        time: "16:00–20:00",
-        location: "Tvättstuga 1 · Gjutargatan 26",
-    };
+    const { token } = useContext(AuthContext);
+    const [booking, setBooking] = useState(null);
+
+    // Hämtar den inloggades aktiva bokning när sidan öppnas
+    useEffect(() => {
+        fetch("/api/bookings/mine", {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => setBooking(data));
+        }, [token]);
+    
+    // Gör om bokningen från databasen till det kortet visar
+const activeBooking = booking
+  ? {
+      weekday: new Date(booking.date).toLocaleDateString("sv-SE", { weekday: "long" }).toUpperCase(),
+      dayOfMonth: new Date(booking.date).getDate(),
+      month: new Date(booking.date).toLocaleDateString("sv-SE", { month: "short" }).toUpperCase(),
+      dateLabel: new Date(booking.date).toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "short" }),
+      time: booking.time,
+      location: booking.location,
+    }
+  : null;
 
     // Att bekräfta i dialogen är ännu inte samma sak som att spara en avbokning.
     const handleCancelConfirmation = () => {
@@ -77,20 +92,25 @@ export default function Dashboard() {
                                 <p className="eyebrow">NÄSTA BOKNING</p>
                                 <h2>Din tvättid</h2>
                             </div>
-                            <span className="booking-badge"><span className="status-dot" />Aktiv</span>
+                            {activeBooking && <span className="booking-badge"><span className="status-dot" />Aktiv</span>}
                         </div>
-                        <div className="booking-display">
-                            <div className="booking-date-box">
-                                <span className="booking-day">{activeBooking.weekday}</span>
-                                <strong>{activeBooking.dayOfMonth}</strong>
-                                <span>{activeBooking.month}</span>
+
+                                                {activeBooking ? (
+                            <div className="booking-display">
+                                <div className="booking-date-box">
+                                    <span className="booking-day">{activeBooking.weekday}</span>
+                                    <strong>{activeBooking.dayOfMonth}</strong>
+                                    <span>{activeBooking.month}</span>
+                                </div>
+                                <div className="booking-details">
+                                    <h3>{activeBooking.time}</h3>
+                                    <p>{activeBooking.location}</p>
+                                </div>
+                                <span className="booking-arrow">→</span>
                             </div>
-                            <div className="booking-details">
-                                <h3>{activeBooking.time}</h3>
-                                <p>{activeBooking.location}</p>
-                            </div>
-                            <span className="booking-arrow">→</span>
-                        </div>
+                        ) : (
+                            <p className="welcome-copy">Du har ingen aktiv bokning just nu.</p>
+                        )}
                     </article>
 
                     <aside className="quick-actions" aria-label="Snabblänkar">
@@ -109,6 +129,7 @@ export default function Dashboard() {
                             <button
                                 type="button"
                                 className="action-button action-danger"
+                                disabled={!activeBooking}
                                 onClick={() => setCancelDialogOpen(true)}
                             >
                                 <span className="action-icon">×</span>
@@ -183,10 +204,10 @@ export default function Dashboard() {
                                 Det här är din nuvarande bokning:
                             </Typography>
                             <Typography component="p" variant="body1">
-                                {activeBooking.dateLabel}, {activeBooking.time}
+                                {activeBooking?.dateLabel}, {activeBooking?.time}
                             </Typography>
                             <Typography component="p" variant="body2" sx={{ mt: 0.5 }}>
-                                {activeBooking.location}
+                                {activeBooking?.location}
                             </Typography>
                             <Typography sx={{ mt: 2 }}>
                                 Vill du fortsätta med avbokningen?

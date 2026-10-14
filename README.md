@@ -9,17 +9,20 @@ SmartTvätt är en webbapp för bokning av tvättider. Frontend och backend dela
 
 ## Installation
 
+Eftersom detta är ett skolprojekt och inte lanserat i produktionsläge körs applikationen i utvecklingsläge. Både backend (API-server) och frontend (Vite) startas parallellt i två terminalfönster från projektroten:
+
+### 1. Installera beroenden
 Öppna en terminal i projektmappen `SmartTvatt` och installera projektets frontend- och backendberoenden:
 
 ```bash
 npm install
 ```
-
+### 2. Konfigurera miljövariabler
 Skapa sedan en `.env`-fil i projektroten med anslutningsuppgifter till MongoDB och en egen JWT-hemlighet:
 
 ```env
-MONGO_URI=mongodb://localhost:27017/smarttvatt
-PORT=5000
+PORT=5001
+MONGO_URI=mongodb+srv://<användarnamn>:<lösenord>@smarttvatt.fg8oaoz.mongodb.net/smarttvatt?retryWrites=true&w=majority
 JWT_SECRET=byt-till-en-egen-hemlig-nyckel
 ```
 
@@ -72,8 +75,23 @@ npm run lint
 
 ## Projektstruktur
 
+Projektet följer en tydlig **MVC-struktur** för att hålla koden ren och strukturerad:
+
 - `controllers/` – API- och frontendlogik
-- `middleware/`, `models/`, `routes/`, `server.js` – backend
+- `middleware/`, `models/` (MongoDB / Mongoose), `routes/`, `server.js` – backend
 - `src/views/` – appens startpunkt, sidvyer, komponenter och stilmallar
 - `src/assets/` – frontendens bilder och andra importerade tillgångar
 - `public/` – statiska tillgångar
+
+## API Endpoints
+
+### Autentisering (`/api/auth`)
+- `POST /api/auth/register` – Registrera ny boende
+- `POST /api/auth/login` – Logga in och erhåll JWT-token
+- `POST /api/auth/forgot-password` – Begär återställning av lösenord
+- `PUT /api/auth/reset-password/:resetToken` – Sätt nytt lösenord
+
+### Bokningar (`/api/bookings`)
+- `GET /api/bookings` – Hämta alla bokningar / lediga tider
+- `POST /api/bookings` – Skapa ny tvättbokning (Kräver JWT)
+- `DELETE /api/bookings/:id` – Avboka tvättid (Kräver JWT)

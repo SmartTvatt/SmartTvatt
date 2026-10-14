@@ -1,0 +1,29 @@
+{
+    "common": {
+      "appName": "SmartTvätt",
+      "tagline": "Your laundry room, simplified",
+      "loading": "Loading...",
+      "logout": "Log out"
+    },
+    "auth": {
+      "welcomeBack": "Welcome back",
+      "createAccount": "Create your account",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "name@brf.com",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm password",
+      "nameLabel": "Name",
+      "loginBtn": "Log in",
+      "loggingIn": "Logging in...",
+      "registerBtn": "Sign up",
+      "noAccount": "Don't have an account?",
+      "hasAccount": "Already have an account?",
+      "registerHere": "Sign up here",
+      "loginHere": "Log in here"
+    },
+    "nav": {
+      "dashboard": "Bookings",
+      "admin": "Admin",
+      "profile": "Profile"
+    }
+  }

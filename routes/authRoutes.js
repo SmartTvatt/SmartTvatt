@@ -8,7 +8,7 @@ import {
 
 const router = express.Router();
 
-// Autentiseringsrutter.
+// Autentiseringsrutter
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);

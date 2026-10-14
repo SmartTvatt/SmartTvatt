@@ -1,10 +1,13 @@
 import express from 'express';
-import { getMyBooking } from '../controllers/bookingController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import { createBooking, getMyBooking } from '../controllers/bookingController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Returnerar den aktiva bokningen för den autentiserade användaren.
-router.get('/mine', authMiddleware, getMyBooking);
+// Skapa ny bokning (kräver att användaren är inloggad)
+router.post('/', protect, createBooking);
+
+// Returnerar den aktiva bokningen för den autentiserade användaren
+router.get('/mine', protect, getMyBooking);
 
 export default router;
