@@ -6,6 +6,7 @@ import {
   resetPassword,
 } from '../controllers/authController.js';
 
+// Denna kopia monteras inte i server.js; aktiva auth-rutter finns i routes/authRoutes.js.
 const router = express.Router();
 
 // Autentiseringsrutter

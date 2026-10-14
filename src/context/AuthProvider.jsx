@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AuthContext } from './AuthContext';
 
 export const AuthProvider = ({ children }) => {
+  // Återställ profilen vid omladdning så appen vet vilken roll som är inloggad.
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -15,11 +16,13 @@ export const AuthProvider = ({ children }) => {
     return null;
   });
 
+  // Token skickas med API-anrop som kräver en inloggad användare.
   const [token, setToken] = useState(() => {
     return localStorage.getItem('token') || null;
   });
 
   const login = (userData, userToken) => {
+    // Uppdatera React-state och localStorage tillsammans så sessionen överlever omladdning.
     setUser(userData);
     setToken(userToken);
     localStorage.setItem('token', userToken);
@@ -27,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Rensa både minnet och den sparade sessionen när användaren loggar ut.
     setUser(null);
     setToken(null);
     localStorage.removeItem('token');
