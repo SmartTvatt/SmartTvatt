@@ -2,6 +2,7 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { formatLongDate } from "./bookingDateUtils.js";
 import './Dashboard.css'
 import { Link, useNavigate } from "react-router-dom";
 
@@ -21,8 +22,14 @@ export default function Dashboard() {
         fetch("/api/bookings/mine", {
             headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => (res.ok ? res.json() : null))
-            .then((data) => setBooking(data));
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Kunde inte hämta din bokning.");
+                return data;
+            })
+            .then((data) => setBooking(data))
+            .catch((error) => setBookingError(error.message || "Kunde inte hämta din bokning."))
+            .finally(() => setBookingLoading(false));
         }, [token]);
 
     // Inkorgen hämtas med JWT så backend kan begränsa svaret till den inloggade boende.
@@ -44,23 +51,41 @@ export default function Dashboard() {
     // Gör om bokningen från databasen till det kortet visar
 const activeBooking = booking
   ? {
-      weekday: new Date(booking.date).toLocaleDateString("sv-SE", { weekday: "long" }).toUpperCase(),
-      dayOfMonth: new Date(booking.date).getDate(),
-      month: new Date(booking.date).toLocaleDateString("sv-SE", { month: "short" }).toUpperCase(),
-      dateLabel: new Date(booking.date).toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "short" }),
+      weekday: new Intl.DateTimeFormat("sv-SE", { weekday: "long", timeZone: "UTC" })
+          .format(new Date(booking.date)).toUpperCase(),
+      dayOfMonth: new Date(booking.date).getUTCDate(),
+      month: new Intl.DateTimeFormat("sv-SE", { month: "short", timeZone: "UTC" })
+          .format(new Date(booking.date)).toUpperCase(),
+      dateLabel: formatLongDate(booking.date.slice(0, 10)),
       time: booking.time,
       location: booking.location,
     }
   : null;
 
-    // Att bekräfta i dialogen är ännu inte samma sak som att spara en avbokning.
-    const handleCancelConfirmation = () => {
-        setShowNextStep(true);
+    const handleCancelConfirmation = async () => {
+        if (!booking || !token) return;
+        setCancelling(true);
+        setBookingError("");
+        try {
+            const response = await fetch(`/api/bookings/${booking._id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Kunde inte avboka tiden.");
+            setBooking(null);
+            setShowNextStep(true);
+        } catch (error) {
+            setBookingError(error.message || "Kunde inte avboka tiden.");
+        } finally {
+            setCancelling(false);
+        }
     };
 
     const handleCloseCancelDialog = () => {
         setCancelDialogOpen(false);
         setShowNextStep(false);
+        setBookingError("");
     };
 
     const handleGoToBooking = () => {
@@ -95,6 +120,11 @@ const activeBooking = booking
 
 
             <main className="dashboard-main">
+                {bookingError && (
+                    <Alert severity="error" role="alert" onClose={() => setBookingError("")} sx={{ mb: 2 }}>
+                        {bookingError}
+                    </Alert>
+                )}
                 <section className="welcome-section">
                     <div>
                         <p className="eyebrow">ÖVERSIKT</p>
@@ -114,7 +144,9 @@ const activeBooking = booking
                             {activeBooking && <span className="booking-badge"><span className="status-dot" />Aktiv</span>}
                         </div>
 
-                                                {activeBooking ? (
+                                                {bookingLoading ? (
+                                                    <p className="welcome-copy">Hämtar bokning...</p>
+                                                ) : activeBooking ? (
                             <div className="booking-display">
                                 <div className="booking-date-box">
                                     <span className="booking-day">{activeBooking.weekday}</span>
@@ -213,12 +245,15 @@ const activeBooking = booking
                 </DialogTitle>
 
                 <DialogContent>
+                    {bookingError && (
+                        <Alert severity="error" role="alert" sx={{ mb: 2 }}>
+                            {bookingError}
+                        </Alert>
+                    )}
                     {showNextStep ? (
                         <>
-                            {/* Förklarar att gränssnittet ännu inte kan spara avbokningen. */}
-                            <Alert severity="info" role="status" sx={{ mb: 2 }}>
-                                Du har valt att avboka, men ändringen är inte sparad eftersom
-                                avbokningen ännu inte är kopplad till systemet.
+                            <Alert severity="success" role="status" sx={{ mb: 2 }}>
+                                Din bokning är avbokad och ändringen är sparad.
                             </Alert>
                             <Typography>
                                 Du kan gå vidare till bokningssidan eller stanna på dashboarden.
@@ -262,8 +297,9 @@ const activeBooking = booking
                                 color="error"
                                 variant="contained"
                                 onClick={handleCancelConfirmation}
+                                disabled={cancelling}
                             >
-                                Ja, avboka
+                                {cancelling ? "Avbokar..." : "Ja, avboka"}
                             </Button>
                         </>
                     )}

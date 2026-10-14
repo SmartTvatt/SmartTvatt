@@ -1,5 +1,6 @@
 // Importerar Material-UI komponenter.
 import { Card, CardContent, Typography } from "@mui/material";
+import { formatLongDate } from "./bookingDateUtils.js";
 
 // Själva komponenten som visar bokningsinformationen.
 // Den exporteras så BookingView kan importera den.
@@ -25,7 +26,9 @@ export default function BookingInfoCard({ booking = null }) {
             {/* Uppgifterna kommer från användande komponent, inte från hårdkodad exempeldata. */}
             {/* Visar själva bokningsinformationen. */}
             <Typography variant="body1">
-              Du har bokat: {booking.day} kl {booking.time}
+              Du har bokat: {booking.date
+                ? formatLongDate(booking.date.slice(0, 10))
+                : booking.day} kl {booking.time}
             </Typography>
           </>
         ) : (

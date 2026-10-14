@@ -1,48 +1,120 @@
-import { Alert, Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { Alert, Box, Button, Typography } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 import "./Booking.css";
 
-// Importera komponenterna
 import BookingInfoCard from "./BookingInfoCard.jsx";
 import TimeSlotTable from "./TimeSlotTable.jsx";
 import BookingDialog from "./BookingDialog.jsx";
+import { addDays, formatDateOnly, formatLongDate, getMonday } from "./bookingDateUtils.js";
 
-// Själva vyn för bokningssidan.
-// Bokningsdata tas emot utifrån så att vyn kan visa både aktiv bokning och tomt läge.
-export default function BookingView({ booking = null, bookedSlots = [] }) {
+const BOOKING_LOCATION = "Gjutargatan 26";
 
-  // State som styr om dialogen är öppen eller stängd.
+async function readResponse(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Bokningsservern svarade inte med API-data (HTTP ${response.status}). Starta om backend med npm run dev:server och ladda om sidan.`
+    );
+  }
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Begäran kunde inte genomföras.");
+  }
+  return data;
+}
+
+export default function BookingView() {
+  const { token } = useContext(AuthContext);
+  const [booking, setBooking] = useState(null);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [bookingNotice, setBookingNotice] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  // State som håller den tid/dag användaren klickade på.
   const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // API:t är inte inkopplat ännu, så sidan får inte påstå att tiden har sparats.
-  const [bookingNotice, setBookingNotice] = useState("");
+  const weekStartDate = formatDateOnly(weekStart);
 
-  // Funktion som körs när man klickar på en cell i tabellen.
-  // Den tar emot ett objekt med { day, time }.
+  useEffect(() => {
+    if (!token) return undefined;
+
+    const controller = new AbortController();
+    const loadBookings = async () => {
+      setLoading(true);
+      setErrorMessage("");
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+        const [myBookingResponse, slotsResponse] = await Promise.all([
+          fetch("/api/bookings/mine", { headers, signal: controller.signal }),
+          fetch(`/api/bookings?weekStart=${weekStartDate}`, { headers, signal: controller.signal }),
+        ]);
+        const [myBooking, slots] = await Promise.all([
+          readResponse(myBookingResponse),
+          readResponse(slotsResponse),
+        ]);
+        setBooking(myBooking);
+        setBookedSlots(slots);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          setErrorMessage(error.message || "Kunde inte hämta bokningsuppgifter.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    loadBookings();
+    return () => controller.abort();
+  }, [token, weekStartDate]);
+
   const handleSlotClick = (slot) => {
-    setSelectedSlot(slot);   // Spara vald tid
-    setDialogOpen(true);     // Öppna dialogen
+    setErrorMessage("");
+    setSelectedSlot(slot);
+    setDialogOpen(true);
   };
 
-  // Funktion som stänger dialogen.
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setSelectedSlot(null);   // Rensa vald tid
+    setSelectedSlot(null);
   };
 
-  // Tar emot den valda tiden från dialogen utan att felaktigt skapa en bokning.
-  const handleConfirmBooking = (slot) => {
+  const handleConfirmBooking = async (slot) => {
     if (!slot) return;
 
-    setBookingNotice(
-      `Tiden ${slot.day} kl ${slot.time} är inte sparad än. Bokningsfunktionen kopplas till API:t senare.`
-    );
-    handleCloseDialog();
+    setSubmitting(true);
+    setErrorMessage("");
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          date: slot.date,
+          time: slot.time,
+          location: BOOKING_LOCATION,
+        }),
+      });
+      const createdBooking = await readResponse(response);
+      setBooking(createdBooking);
+      setBookedSlots((currentSlots) => [...currentSlots, createdBooking]);
+      setBookingNotice(`Bokningen ${formatLongDate(slot.date)} kl ${slot.time} är sparad.`);
+      handleCloseDialog();
+    } catch (error) {
+      setErrorMessage(error.message || "Kunde inte spara bokningen.");
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const currentWeekStart = getMonday(new Date());
+  const isCurrentWeek = weekStartDate === formatDateOnly(currentWeekStart);
 
   return (
     <Box component="main" className="booking-page">
@@ -52,38 +124,62 @@ export default function BookingView({ booking = null, bookedSlots = [] }) {
           Boka tid
         </Typography>
         <Typography className="booking-page__intro">
-          Välj en ledig tid i schemat för att komma igång.
+          Välj en vecka och sedan en ledig tid för ett exakt datum.
         </Typography>
       </header>
 
-      {/* Berättar tydligt att bekräftelsen ännu inte sparar en bokning. */}
+      {errorMessage && (
+        <Alert severity="error" role="alert" onClose={() => setErrorMessage("")}>
+          {errorMessage}
+        </Alert>
+      )}
       {bookingNotice && (
         <Alert
-          severity="info"
+          severity="success"
           role="status"
           onClose={() => setBookingNotice("")}
-          sx={{ mb: 3 }}
         >
           {bookingNotice}
         </Alert>
       )}
 
-      {/* Kortet visar bokningsuppgifter eller tomt läge utifrån samma bokningsdata. */}
       <BookingInfoCard booking={booking} />
 
-      {/* Kalendern får en callback som triggas vid klick */}
+      <Box className="booking-week-navigation" aria-label="Välj vecka">
+        <Button
+          type="button"
+          onClick={() => setWeekStart((current) => addDays(current, -7))}
+          disabled={isCurrentWeek}
+          aria-label="Visa föregående vecka"
+        >
+          Föregående vecka
+        </Button>
+        <Typography component="p" aria-live="polite">
+          {formatLongDate(weekStartDate)} – {formatLongDate(formatDateOnly(addDays(weekStart, 6)))}
+        </Typography>
+        <Button
+          type="button"
+          onClick={() => setWeekStart((current) => addDays(current, 7))}
+          aria-label="Visa nästa vecka"
+        >
+          Nästa vecka
+        </Button>
+      </Box>
+
       <TimeSlotTable
         onSlotClick={handleSlotClick}
         bookedSlots={bookedSlots}
         userBooking={booking}
+        weekStart={weekStart}
+        disabled={loading || Boolean(errorMessage)}
       />
 
-      {/* Dialogen öppnas när dialogOpen = true */}
       <BookingDialog
         open={dialogOpen}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmBooking}
         selectedSlot={selectedSlot}
+        submitting={submitting}
       />
     </Box>
   );

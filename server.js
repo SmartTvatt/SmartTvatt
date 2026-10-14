@@ -5,11 +5,13 @@ import connectDB from './db.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js'; ///
+import Booking from './models/Booking.js';
 import messageRoutes from './routes/messageRoutes.js';
 
 // Läs miljövariablerna innan databasanslutningen och servern använder dem.
 dotenv.config();
-connectDB();
+await connectDB();
+await Booking.init();
 
 const app = express();
 
