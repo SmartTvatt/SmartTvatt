@@ -3,13 +3,12 @@ import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, Ta
 import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController";
 import { addDays, formatDateOnly } from "./bookingDateUtils.js";
 
-// Dummy-data för dagar och tider.
-// Detta är bara temporärt tills backend kopplas in.
-// Vi använder dessa för att rendera en enkel kalender.
+// Veckodagar och öppettider kommer från schemainställningarna.
 const days = bookingWeekdays;
 
 // Statusen avgör både cellens färg och om användaren får välja tiden.
 function getSlotStatus(date, time, isAvailable, bookedSlots, userBooking, disabled) {
+  // Lås schemat medan bokningsdata laddas eller vid API-fel.
   if (disabled) return "unavailable";
 
   // Om cellen är användarens bokning → gul.
@@ -35,6 +34,7 @@ function getSlotStatus(date, time, isAvailable, bookedSlots, userBooking, disabl
   }
 
   const today = formatDateOnly(new Date());
+  // Förflutna datum och redan startade tider kan inte bokas.
   if (date < today) return "unavailable";
   if (date === today) {
     const [startHour, startMinute] = time.split(/[–-]/)[0].split(":").map(Number);
@@ -88,6 +88,7 @@ export default function TimeSlotTable({
     ...day,
     intervals: getBookingIntervals(day.key),
   }));
+  // Varje kolumn får ett faktiskt datum i den valda veckan.
   const dates = days.map((_, index) => formatDateOnly(addDays(weekStart, index)));
   const intervals = [...new Map(
     intervalsByDay.flatMap(({ intervals: dayIntervals }) =>

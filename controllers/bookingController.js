@@ -1,5 +1,6 @@
 import Booking from '../models/Booking.js';
 
+// Godkänner bara riktiga datum i formatet YYYY-MM-DD, utan tidszonsförskjutning.
 const isDateOnly = (value) => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false;
@@ -9,6 +10,7 @@ const isDateOnly = (value) => {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 };
 
+// Översätter unika databasindex till tydliga konflikter för användaren.
 const duplicateKeyResponse = (error, res) => {
   if (error.code !== 11000) return false;
 
@@ -28,6 +30,7 @@ export const getBookings = async (req, res) => {
       return res.status(400).json({ message: 'Ange veckans startdatum i formatet ÅÅÅÅ-MM-DD.' });
     }
 
+    // Ett halvöppet intervall fångar hela veckan utan att ta med nästa måndag.
     const start = new Date(`${weekStart}T00:00:00.000Z`);
     const end = new Date(start);
     end.setUTCDate(end.getUTCDate() + 7);
@@ -69,6 +72,7 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Datum, tid och plats måste anges.' });
     }
 
+    // Ägaren hämtas från den verifierade JWT:n, inte från klientens request.
     const booking = await Booking.create({
       user: req.user.id,
       date: new Date(`${date}T00:00:00.000Z`),
@@ -93,6 +97,7 @@ export const cancelBooking = async (req, res) => {
         user: req.user.id,
         status: 'aktiv',
       },
+      // Statusändring bevarar bokningshistoriken och frigör tiden.
       { status: 'avbokad' },
       { new: true, runValidators: true }
     );

@@ -11,6 +11,7 @@ import messageRoutes from './routes/messageRoutes.js';
 // Läs miljövariablerna innan databasanslutningen och servern använder dem.
 dotenv.config();
 await connectDB();
+// Skapa/verifiera unika bokningsindex innan API:t börjar ta emot anrop.
 await Booking.init();
 
 const app = express();

@@ -20,7 +20,7 @@ export default function Dashboard() {
     const [messagesLoading, setMessagesLoading] = useState(true);
     const [messagesError, setMessagesError] = useState("");
 
-    // Hämtar den inloggades aktiva bokning när sidan öppnas
+    // Hämtar den inloggades aktiva bokning för dashboarden.
     useEffect(() => {
         fetch("/api/bookings/mine", {
             headers: { Authorization: `Bearer ${token}` },
@@ -70,6 +70,7 @@ const activeBooking = booking
         setCancelling(true);
         setBookingError("");
         try {
+            // Avbokningen sparas på servern innan dashboarden uppdateras.
             const response = await fetch(`/api/bookings/${booking._id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },

@@ -25,6 +25,7 @@ const bookingSchema = new mongoose.Schema({
   },
 });
 
+// Hindrar både flera aktiva bokningar per person och dubbelbokade tider.
 bookingSchema.index(
   { user: 1 },
   { unique: true, partialFilterExpression: { status: 'aktiv' } }

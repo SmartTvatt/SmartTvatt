@@ -9,6 +9,7 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// Schemat får bara aktiva bokningar för den efterfrågade veckan.
 router.get('/', protect, getBookings);
 // Returnerar den aktiva bokningen för den autentiserade användaren.
 router.get('/mine', protect, getMyBooking);

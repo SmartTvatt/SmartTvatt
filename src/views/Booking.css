@@ -54,6 +54,7 @@
   border-radius: 12px;
 }
 
+/* Veckoväljaren håller datumet tydligt även på små skärmar. */
 .booking-week-navigation {
   display: flex;
   align-items: center;

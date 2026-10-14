@@ -40,6 +40,7 @@ export default function BookingView() {
 
   const weekStartDate = formatDateOnly(weekStart);
 
+  // Laddar egen bokning och veckans upptagna tider parallellt.
   useEffect(() => {
     if (!token) return undefined;
 
@@ -89,6 +90,7 @@ export default function BookingView() {
     setSubmitting(true);
     setErrorMessage("");
     try {
+      // Skickar det valda datumet och intervallet till API:t för lagring.
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: {
