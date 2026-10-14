@@ -13,6 +13,9 @@ export default function Dashboard() {
 
     const { token, user } = useContext(AuthContext);
     const [booking, setBooking] = useState(null);
+    const [bookingError, setBookingError] = useState("");
+    const [bookingLoading, setBookingLoading] = useState(true);
+    const [cancelling, setCancelling] = useState(false);
     const [messages, setMessages] = useState([]);
     const [messagesLoading, setMessagesLoading] = useState(true);
     const [messagesError, setMessagesError] = useState("");
