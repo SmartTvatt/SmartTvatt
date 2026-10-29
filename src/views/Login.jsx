@@ -1,31 +1,25 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // 1. Importera useTranslation
+import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../context/AuthContext';
 import logo from '../assets/logo.svg';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 
 export default function Login() {
-  // 2. Hämta t-funktionen från i18next
   const { t } = useTranslation();
 
-  // States för formulärdata, felmeddelanden och laddningsstatus
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Context för global inloggning och router för navigering
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Hanterar inloggningsanropet mot backenden på port 5001
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-    setLoading(true);
 
-    // Klientsidsvalidering
     if (!email.includes('@')) {
       setErrorMessage('Ange en giltig e-postadress.');
       return;
@@ -49,7 +43,6 @@ export default function Login() {
       if (res.ok) {
         login(data.user, data.token);
 
-        // Omdirigera baserat på roll
         if (data.user.role === 'admin') {
           navigate('/admin');
         } else {
@@ -68,12 +61,10 @@ export default function Login() {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: '#ffffff' }}>
-      {/* Språkväljare i övre högra hörnet */}      
       <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 10 }}>
         <LanguageSwitcher />
       </div>
 
-      {/* Huvudcontainer som centrerar kortet på skärmen */}
       <div style={{
         minHeight: '100vh',
         backgroundColor: '#ffffff',
@@ -82,7 +73,6 @@ export default function Login() {
         justifyContent: 'center',
         padding: '20px',
       }}>
-        {/* Inloggningskort */}
         <div style={{
           width: '100%',
           maxWidth: '420px',
@@ -94,7 +84,6 @@ export default function Login() {
           color: '#111827',
           textAlign: 'left',
         }}>
-          {/* Logotyp och rubriker */}
           <div style={{ marginBottom: '24px', textAlign: 'center' }}>
             <img
               src={logo}
@@ -117,7 +106,6 @@ export default function Login() {
             </h2>
           </div>
 
-          {/* Felmeddelande-box vid misslyckad inloggning */}
           {errorMessage && (
             <div style={{
               padding: '10px 14px',
@@ -132,7 +120,6 @@ export default function Login() {
             </div>
           )}
 
-          {/* Inloggningsformulär */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <label style={{ fontSize: '12px', fontWeight: '600', color: '#6B7280', textTransform: 'uppercase' }}>
@@ -214,7 +201,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Navigationslänk till registrering */}
           <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '13px', color: '#6B7280' }}>
             <span>{t('auth.noAccount')} </span>
             <button
