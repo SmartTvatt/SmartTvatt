@@ -1,4 +1,5 @@
 import express from 'express';
+import { getFaultReports } from '../controllers/faultReportController.js';
 import { getAllUsers, sendMessage, updateUserRole } from '../controllers/adminController.js';
 import { updateTimeSlots } from '../controllers/timeSlotApiController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js'; // Justera sökvägen om din fil heter något annat
@@ -19,5 +20,6 @@ router.put('/timeslots', updateTimeSlots);
 
 // Serverns /api/admin-prefix gör detta till POST /api/admin/messages.
 router.post('/messages', sendMessage);
+router.get('/fault-reports', getFaultReports);
 
 export default router;

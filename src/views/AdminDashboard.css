@@ -63,7 +63,8 @@
 
 .interval-panel,
 .add-interval-panel,
-.message-panel {
+.message-panel,
+.fault-reports-panel {
   border: 1px solid var(--admin-line);
   border-radius: 8px;
   background: var(--admin-paper);
@@ -336,6 +337,67 @@
   color: var(--admin-green-dark);
 }
 
+.fault-reports-panel {
+  margin-top: 20px;
+}
+
+.fault-reports-panel .message-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fault-report-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fault-report-item {
+  padding: 18px 24px;
+  border-bottom: 1px solid #edf2f0;
+}
+
+.fault-report-item:last-child {
+  border-bottom: 0;
+}
+
+.fault-report-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  color: var(--admin-ink);
+  font-size: 13px;
+}
+
+.fault-report-meta span,
+.fault-report-meta time {
+  color: var(--admin-muted);
+  font-size: 12px;
+}
+
+.fault-report-item p,
+.fault-reports-feedback {
+  margin: 9px 0 0;
+  color: var(--admin-ink);
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fault-reports-feedback {
+  padding: 0 24px 20px;
+  color: var(--admin-muted);
+}
+
+.fault-reports-feedback.error {
+  color: #a84432;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -379,7 +441,8 @@
   }
 
   .message-panel-heading,
-  .message-form {
+  .message-form,
+  .fault-report-item {
     padding-right: 16px;
     padding-left: 16px;
   }

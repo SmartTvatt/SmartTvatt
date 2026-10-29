@@ -9,6 +9,7 @@ import Booking from './models/Booking.js';
 import messageRoutes from './routes/messageRoutes.js';
 import timeslotRoutes from './routes/timeslotRoutes.js';
 import { loadWeeklySchedule } from './services/timeSlotService.js';
+import faultReportRoutes from './routes/faultReportRoutes.js';
 
 // Läs miljövariablerna innan databasanslutningen och servern använder dem.
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/bookings', bookingRoutes); ///
 app.use('/api/messages', messageRoutes);
 app.use('/api/timeslots', timeslotRoutes);
+app.use('/api/fault-reports', faultReportRoutes);
 
 // Test-route
 app.get('/', (req, res) => {

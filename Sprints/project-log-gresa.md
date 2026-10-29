@@ -7,3 +7,8 @@
 ## Week of 2026-10-05
 - Refined the booking page and dashboard cancellation dialog.
 - Matched booking and cancellation styling to the dashboard.
+
+## Final summary
+- Worked on booking and cancellation flows, dashboard behavior, and related styling.
+- Implemented equipment fault reporting for residents and an admin view of submitted reports.
+- Verified the project with `npm run lint` and `npm run build`.
