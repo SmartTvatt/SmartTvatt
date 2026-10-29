@@ -20,6 +20,9 @@ export default function AdminDashboard() {
     const [messageDraft, setMessageDraft] = useState({ recipientId: "all", subject: "", body: "" });
     const [messageFeedback, setMessageFeedback] = useState(null);
     const [isSending, setIsSending] = useState(false);
+    const [faultReports, setFaultReports] = useState([]);
+    const [faultReportsLoading, setFaultReportsLoading] = useState(true);
+    const [faultReportsError, setFaultReportsError] = useState("");
 
     // Spara grundschemat när en ändring görs så det finns kvar efter omladdning.
     useEffect(() => {
@@ -31,7 +34,7 @@ export default function AdminDashboard() {
         if (!token) return;
 
         fetch("/api/admin/users", {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: "Bearer " + token },
         })
             .then(async (response) => {
                 const data = await response.json();
@@ -39,6 +42,21 @@ export default function AdminDashboard() {
                 setResidents(data.filter((resident) => resident.role === "boende"));
             })
             .catch((error) => setMessageFeedback({ type: "error", text: error.message }));
+    }, [token]);
+
+    useEffect(() => {
+        if (!token) return;
+
+        fetch("/api/admin/fault-reports", {
+            headers: { Authorization: "Bearer " + token },
+        })
+            .then(async (response) => {
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || "Felanmälningar kunde inte hämtas.");
+                setFaultReports(data);
+            })
+            .catch((error) => setFaultReportsError(error.message || "Felanmälningar kunde inte hämtas."))
+            .finally(() => setFaultReportsLoading(false));
     }, [token]);
 
     function updateInterval(id, field, value) {
@@ -276,6 +294,44 @@ export default function AdminDashboard() {
                     <p className={`message-feedback ${messageFeedback.type}`} role={messageFeedback.type === "error" ? "alert" : "status"}>
                         {messageFeedback.text}
                     </p>
+                )}
+            </section>
+
+            <section className="fault-reports-panel" aria-labelledby="fault-reports-heading">
+                <div className="message-panel-heading">
+                    <div>
+                        <h2 id="fault-reports-heading">Felanmälningar</h2>
+                        <p>Problem som boende har rapporterat.</p>
+                    </div>
+                    <span className="interval-count">{faultReports.length} rapporter</span>
+                </div>
+                {faultReportsLoading ? (
+                    <p className="fault-reports-feedback">Hämtar felanmälningar...</p>
+                ) : faultReportsError ? (
+                    <p className="fault-reports-feedback error" role="alert">{faultReportsError}</p>
+                ) : faultReports.length ? (
+                    <ul className="fault-report-list">
+                        {faultReports.map((report) => (
+                            <li className="fault-report-item" key={report._id}>
+                                <div className="fault-report-meta">
+                                    <strong>{report.equipment}</strong>
+                                    <span>
+                                        {report.resident?.name || "Boende"}
+                                        {report.resident?.apartmentNumber ? ` · lgh ${report.resident.apartmentNumber}` : ""}
+                                    </span>
+                                    <time dateTime={report.createdAt}>
+                                        {new Date(report.createdAt).toLocaleString("sv-SE", {
+                                            dateStyle: "medium",
+                                            timeStyle: "short",
+                                        })}
+                                    </time>
+                                </div>
+                                <p>{report.description}</p>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="fault-reports-feedback">Inga felanmälningar ännu.</p>
                 )}
             </section>
         </main>

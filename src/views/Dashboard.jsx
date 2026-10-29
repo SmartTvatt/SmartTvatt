@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Dashboard() {
     const navigate = useNavigate();
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [faultDialogOpen, setFaultDialogOpen] = useState(false);
     const [showNextStep, setShowNextStep] = useState(false);
 
     const { token, user } = useContext(AuthContext);
@@ -19,6 +20,10 @@ export default function Dashboard() {
     const [messages, setMessages] = useState([]);
     const [messagesLoading, setMessagesLoading] = useState(true);
     const [messagesError, setMessagesError] = useState("");
+    const [faultDraft, setFaultDraft] = useState({ equipment: "", description: "" });
+    const [faultSubmitting, setFaultSubmitting] = useState(false);
+    const [faultError, setFaultError] = useState("");
+    const [faultNotice, setFaultNotice] = useState("");
 
     // Hämtar den inloggades aktiva bokning för dashboarden.
     useEffect(() => {
@@ -97,6 +102,36 @@ const activeBooking = booking
         navigate("/boka");
     };
 
+    const handleFaultReport = async (event) => {
+        event.preventDefault();
+        if (!token) return;
+
+        setFaultSubmitting(true);
+        setFaultError("");
+        setFaultNotice("");
+
+        try {
+            const response = await fetch("/api/fault-reports", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify(faultDraft),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || "Felanmälan kunde inte skickas.");
+
+            setFaultDraft({ equipment: "", description: "" });
+            setFaultDialogOpen(false);
+            setFaultNotice("Din felanmälan har skickats till administratören.");
+        } catch (error) {
+            setFaultError(error.message || "Felanmälan kunde inte skickas.");
+        } finally {
+            setFaultSubmitting(false);
+        }
+    };
+
     return (
         <div className="dashboard-shell">
             <header className="dashboard-header">
@@ -124,6 +159,11 @@ const activeBooking = booking
 
 
             <main className="dashboard-main">
+                {faultNotice && (
+                    <Alert severity="success" role="status" onClose={() => setFaultNotice("")} sx={{ mb: 2 }}>
+                        {faultNotice}
+                    </Alert>
+                )}
                 {bookingError && (
                     <Alert severity="error" role="alert" onClose={() => setBookingError("")} sx={{ mb: 2 }}>
                         {bookingError}
@@ -191,7 +231,14 @@ const activeBooking = booking
                                 <span><strong>Avboka tid</strong><small>Ändra din bokning</small></span>
                                 <span className="action-chevron">›</span>
                             </button>
-                            <button className="action-button action-neutral">
+                            <button
+                                type="button"
+                                className="action-button action-neutral"
+                                onClick={() => {
+                                    setFaultError("");
+                                    setFaultDialogOpen(true);
+                                }}
+                            >
                                 <span className="action-icon">!</span>
                                 <span><strong>Anmäl skada</strong><small>Rapportera ett problem</small></span>
                                 <span className="action-chevron">›</span>
@@ -308,6 +355,56 @@ const activeBooking = booking
                         </>
                     )}
                 </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={faultDialogOpen}
+                onClose={() => !faultSubmitting && setFaultDialogOpen(false)}
+                aria-labelledby="fault-report-title"
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle id="fault-report-title">Anmäl ett fel</DialogTitle>
+                <form onSubmit={handleFaultReport}>
+                    <DialogContent>
+                        <Typography sx={{ mb: 2 }}>
+                            Beskriv vilken utrustning det gäller och vad som inte fungerar.
+                        </Typography>
+                        {faultError && (
+                            <Alert severity="error" role="alert" sx={{ mb: 2 }}>
+                                {faultError}
+                            </Alert>
+                        )}
+                        <label className="fault-report-field">
+                            Utrustning
+                            <input
+                                type="text"
+                                value={faultDraft.equipment}
+                                onChange={(event) => setFaultDraft({ ...faultDraft, equipment: event.target.value })}
+                                maxLength={100}
+                                required
+                            />
+                        </label>
+                        <label className="fault-report-field">
+                            Beskrivning
+                            <textarea
+                                value={faultDraft.description}
+                                onChange={(event) => setFaultDraft({ ...faultDraft, description: event.target.value })}
+                                maxLength={1000}
+                                rows={4}
+                                required
+                            />
+                        </label>
+                    </DialogContent>
+                    <DialogActions sx={{ p: 2 }}>
+                        <Button onClick={() => setFaultDialogOpen(false)} disabled={faultSubmitting}>
+                            Avbryt
+                        </Button>
+                        <Button type="submit" variant="contained" disabled={faultSubmitting}>
+                            {faultSubmitting ? "Skickar..." : "Skicka felanmälan"}
+                        </Button>
+                    </DialogActions>
+                </form>
             </Dialog>
         </div>
     )
