@@ -1,4 +1,8 @@
 import Booking from '../models/Booking.js';
+import {
+  isTimeSlotAvailable,
+  loadWeeklySchedule,
+} from '../services/timeSlotService.js';
 
 // Godkänner bara riktiga datum i formatet YYYY-MM-DD, utan tidszonsförskjutning.
 const isDateOnly = (value) => {
@@ -72,10 +76,16 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Datum, tid och plats måste anges.' });
     }
 
+    const dateValue = new Date(`${date}T00:00:00.000Z`);
+    const schedule = await loadWeeklySchedule();
+    if (!isTimeSlotAvailable(schedule, dateValue, time)) {
+      return res.status(400).json({ message: 'Den valda tiden är inte bokningsbar den dagen.' });
+    }
+
     // Ägaren hämtas från den verifierade JWT:n, inte från klientens request.
     const booking = await Booking.create({
       user: req.user.id,
-      date: new Date(`${date}T00:00:00.000Z`),
+      date: dateValue,
       time: time.trim(),
       location: location.trim(),
     });

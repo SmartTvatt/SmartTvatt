@@ -2,9 +2,12 @@ import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-export const ProtectedRoute = () => {
-  const { token } = useContext(AuthContext);
+export const ProtectedRoute = ({ allowedRoles }) => {
+  const { token, user } = useContext(AuthContext);
 
-  // Om användaren saknar token (oinloggad) skickas de till inloggningen
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!token) return <Navigate to="/login" replace />;
+  if (allowedRoles && !allowedRoles.includes(user?.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return <Outlet />;
 };

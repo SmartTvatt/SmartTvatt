@@ -166,6 +166,18 @@
   font: inherit;
 }
 
+.time-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.time-input-group .time-input {
+  width: 68px;
+  padding-inline: 5px;
+}
+
 .time-input:focus,
 .add-interval-form select:focus,
 .add-interval-form input:focus {
