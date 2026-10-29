@@ -1,6 +1,6 @@
 // Importerar Material-UI komponenter för tabellen.
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController";
+import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController.js";
 import { addDays, formatDateOnly } from "./bookingDateUtils.js";
 
 // Veckodagar och öppettider kommer från schemainställningarna.
@@ -81,12 +81,13 @@ export default function TimeSlotTable({
   onSlotClick,
   bookedSlots = [],
   userBooking = null,
+  schedule,
   weekStart,
   disabled = false,
 }) {
   const intervalsByDay = days.map((day) => ({
     ...day,
-    intervals: getBookingIntervals(day.key),
+    intervals: getBookingIntervals(day.key, schedule),
   }));
   // Varje kolumn får ett faktiskt datum i den valda veckan.
   const dates = days.map((_, index) => formatDateOnly(addDays(weekStart, index)));

@@ -21,8 +21,10 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/boka" element={<BookingView />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/:day" element={<AdminDaySchedule />} />
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/:day" element={<AdminDaySchedule />} />
+          </Route>
         </Route>
 
         {/* Fångar alla okända adresser och skickar till start */}

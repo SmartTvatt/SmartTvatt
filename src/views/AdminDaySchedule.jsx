@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import {
-    bookingWeekdays,
-    getBookingIntervals,
-    saveBookingIntervals,
-} from "../../controllers/timeslotController";
+import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController.js";
+import { AuthContext } from "../context/AuthContext";
+import { fetchTimeSlots } from "../api/timeSlots.js";
+import { useTimeSlotAutosave } from "../api/useTimeSlotAutosave.js";
+import TimeInput from "./TimeInput.jsx";
 import "./AdminDashboard.css";
 import "./AdminDaySchedule.css";
 
@@ -26,17 +26,46 @@ export default function AdminDaySchedule() {
 }
 
 function DaySchedule({ day }) {
-    // dayKey skickas vidare till localStorage så varje dag kan ha egna avvikelser.
-    const [intervals, setIntervals] = useState(() => getBookingIntervals(day.key));
+    const { token } = useContext(AuthContext);
+    const [intervals, setIntervals] = useState([]);
+    const [scheduleLoading, setScheduleLoading] = useState(true);
+    const [scheduleLoaded, setScheduleLoaded] = useState(false);
+    const {
+        save: autosave,
+        saving: scheduleSaving,
+        error: scheduleError,
+        notice: scheduleNotice,
+        reportError: setScheduleError,
+    } =
+        useTimeSlotAutosave(token, day.key);
     const [newInterval, setNewInterval] = useState({ start: "08:00", end: "12:00" });
     const [formError, setFormError] = useState("");
+
+    useEffect(() => {
+        if (!token) return undefined;
+
+        const controller = new AbortController();
+        fetchTimeSlots(token, controller.signal)
+            .then((schedule) => {
+                setIntervals(getBookingIntervals(day.key, schedule));
+                setScheduleLoaded(true);
+            })
+            .catch((error) => {
+                if (error.name !== "AbortError") setScheduleError(error.message);
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setScheduleLoading(false);
+            });
+
+        return () => controller.abort();
+    }, [day.key, setScheduleError, token]);
 
     function updateInterval(id, field, value) {
         const updatedIntervals = intervals.map((interval) =>
             interval.id === id ? { ...interval, [field]: value } : interval
         );
         setIntervals(updatedIntervals);
-        saveBookingIntervals(updatedIntervals, day.key);
+        autosave(updatedIntervals);
     }
 
     function addInterval(event) {
@@ -56,16 +85,17 @@ function DaySchedule({ day }) {
             return;
         }
 
-        const updatedIntervals = [...intervals, { id: Date.now(), ...newInterval }];
+        const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+        const updatedIntervals = [...intervals, { id, ...newInterval }];
         setIntervals(updatedIntervals);
-        saveBookingIntervals(updatedIntervals, day.key);
+        autosave(updatedIntervals);
         setFormError("");
     }
 
     function removeInterval(id) {
         const updatedIntervals = intervals.filter((interval) => interval.id !== id);
         setIntervals(updatedIntervals);
-        saveBookingIntervals(updatedIntervals, day.key);
+        autosave(updatedIntervals);
     }
 
     const sortedIntervals = [...intervals].sort((left, right) => left.start.localeCompare(right.start));
@@ -102,37 +132,41 @@ function DaySchedule({ day }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {sortedIntervals.map((interval, index) => (
+                            {scheduleLoading ? (
+                                <tr><td colSpan="4">Hämtar schemat...</td></tr>
+                            ) : sortedIntervals.map((interval, index) => (
                                 <tr key={interval.id}>
                                     <th scope="row">Slot {index + 1}</th>
                                     <td>
                                         <label className="visually-hidden" htmlFor={`start-${interval.id}`}>
                                             Starttid för slot {index + 1}
                                         </label>
-                                        <input
+                                        <TimeInput
                                             id={`start-${interval.id}`}
-                                            className="time-input"
-                                            type="time"
+                                            label={`Starttid för slot ${index + 1}`}
                                             value={interval.start}
-                                            onChange={(event) => updateInterval(interval.id, "start", event.target.value)}
+                                            disabled={!scheduleLoaded}
+                                            onChange={(value) => updateInterval(interval.id, "start", value)}
                                         />
                                     </td>
                                     <td>
                                         <label className="visually-hidden" htmlFor={`end-${interval.id}`}>
                                             Sluttid för slot {index + 1}
                                         </label>
-                                        <input
+                                        <TimeInput
                                             id={`end-${interval.id}`}
-                                            className="time-input"
-                                            type="time"
+                                            label={`Sluttid för slot ${index + 1}`}
                                             value={interval.end}
-                                            onChange={(event) => updateInterval(interval.id, "end", event.target.value)}
+                                            disabled={!scheduleLoaded}
+                                            allowMidnight
+                                            onChange={(value) => updateInterval(interval.id, "end", value)}
                                         />
                                     </td>
                                     <td className="interval-action-cell">
                                         <button
                                             className="remove-interval-button"
                                             type="button"
+                                            disabled={!scheduleLoaded}
                                             aria-label={`Ta bort slot ${index + 1} ${day.label.toLowerCase()}`}
                                             onClick={() => removeInterval(interval.id)}
                                         >
@@ -141,7 +175,7 @@ function DaySchedule({ day }) {
                                     </td>
                                 </tr>
                             ))}
-                            {sortedIntervals.length === 0 && (
+                            {!scheduleLoading && sortedIntervals.length === 0 && (
                                 <tr>
                                     <td colSpan="4">Inga bokningsbara tider den här dagen.</td>
                                 </tr>
@@ -159,25 +193,29 @@ function DaySchedule({ day }) {
                 <form className="add-interval-form" onSubmit={addInterval}>
                     <label>
                         Starttid
-                        <input
-                            type="time"
+                        <TimeInput
+                            label={`Starttid för nytt intervall ${day.label.toLowerCase()}`}
                             value={newInterval.start}
-                            onChange={(event) => setNewInterval({ ...newInterval, start: event.target.value })}
-                            required
+                            disabled={!scheduleLoaded}
+                            onChange={(value) => setNewInterval((current) => ({ ...current, start: value }))}
                         />
                     </label>
                     <label>
                         Sluttid
-                        <input
-                            type="time"
+                        <TimeInput
+                            label={`Sluttid för nytt intervall ${day.label.toLowerCase()}`}
                             value={newInterval.end}
-                            onChange={(event) => setNewInterval({ ...newInterval, end: event.target.value })}
-                            required
+                            disabled={!scheduleLoaded}
+                            allowMidnight
+                            onChange={(value) => setNewInterval((current) => ({ ...current, end: value }))}
                         />
                     </label>
-                    <button className="add-interval-button" type="submit">Lägg till</button>
+                    <button className="add-interval-button" type="submit" disabled={!scheduleLoaded}>Lägg till</button>
                 </form>
                 {formError && <p className="form-error" role="alert">{formError}</p>}
+                {scheduleError && <p className="form-error" role="alert">{scheduleError}</p>}
+                {scheduleNotice && <p className="message-feedback success" role="status">{scheduleNotice}</p>}
+                {scheduleSaving && <p role="status">Sparar ändring...</p>}
             </section>
         </main>
     );
