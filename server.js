@@ -7,6 +7,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js'; ///
 import Booking from './models/Booking.js';
 import messageRoutes from './routes/messageRoutes.js';
+import faultReportRoutes from './routes/faultReportRoutes.js';
 
 // Läs miljövariablerna innan databasanslutningen och servern använder dem.
 dotenv.config();
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/bookings', bookingRoutes); ///
 app.use('/api/messages', messageRoutes);
+app.use('/api/fault-reports', faultReportRoutes);
 
 // Test-route
 app.get('/', (req, res) => {

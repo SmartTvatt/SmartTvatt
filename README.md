@@ -110,6 +110,10 @@ Adminmeddelanden skickas som in-app-meddelanden, inte e-post. Admin-API:et spara
 ### Admin (`/api/admin`)
 - `GET /api/admin/users` – Hämta användare (Kräver admin-JWT)
 - `POST /api/admin/messages` – Skicka meddelande till en boende eller alla boende (Kräver admin-JWT)
+- `GET /api/admin/fault-reports` – Hämta boendes felanmälningar (Kräver admin-JWT)
 
 ### Meddelanden (`/api/messages`)
 - `GET /api/messages/mine` – Hämta den inloggades meddelanden (Kräver JWT)
+
+### Felanmälningar (`/api/fault-reports`)
+- `POST /api/fault-reports` – Skicka en felanmälan (Kräver boende-JWT)
