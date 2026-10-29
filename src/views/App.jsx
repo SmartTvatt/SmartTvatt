@@ -3,8 +3,10 @@ import AdminDashboard from "./AdminDashboard.jsx";
 import AdminDaySchedule from "./AdminDaySchedule.jsx";
 import BookingView from "./BookingView.jsx";
 import Dashboard from "./Dashboard.jsx";
+import ForgotPassword from "./ForgotPassword.jsx";
 import Login from "./Login.jsx";
 import Register from "./Register.jsx";
+import ResetPassword from "./ResetPassword.jsx";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 
 export default function App() {
@@ -14,6 +16,8 @@ export default function App() {
         {/* Öppna rutter */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
 
         {/* Skyddade rutter – kräver inloggning */}
         <Route element={<ProtectedRoute />}>

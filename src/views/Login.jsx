@@ -179,6 +179,22 @@ export default function Login() {
             </div>
 
             <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              style={{
+                alignSelf: 'flex-end',
+                background: 'none',
+                border: 'none',
+                color: '#1F6B56',
+                cursor: 'pointer',
+                padding: 0,
+                textDecoration: 'underline',
+              }}
+            >
+              {t('auth.forgotPasswordLink')}
+            </button>
+
+            <button
               type="submit"
               disabled={loading}
               style={{
