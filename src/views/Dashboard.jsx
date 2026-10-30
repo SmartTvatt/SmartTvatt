@@ -1,8 +1,10 @@
+//sidan användaren ser efter inloggning
 
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { formatLongDate } from "./bookingDateUtils.js";
+import { AuthContext } from "../context/AuthContext";  //hämtar token och användaren från inloggningen
+
+import { formatLongDate } from "./bookingDateUtils.js"; // formatLongDate , funktion som gör "2026-10-16" till “fredag 16 oktober”.
 import './Dashboard.css'
 import { Link, useNavigate } from "react-router-dom";
 
@@ -13,6 +15,7 @@ export default function Dashboard() {
 
     const { token, user } = useContext(AuthContext);
     const [booking, setBooking] = useState(null);
+
     const [bookingError, setBookingError] = useState("");
     const [bookingLoading, setBookingLoading] = useState(true);
     const [cancelling, setCancelling] = useState(false);
@@ -22,18 +25,18 @@ export default function Dashboard() {
 
     // Hämtar den inloggades aktiva bokning när sidan öppnas
     useEffect(() => {
-        fetch("/api/bookings/mine", {
-            headers: { Authorization: `Bearer ${token}` },
+        fetch("/api/bookings/mine", { //frågar backend efter min bokning.
+            headers: { Authorization: `Bearer ${token}` }, // visa token till vakten
         })
             .then(async (res) => {
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || "Kunde inte hämta din bokning.");
+                const data = await res.json();       
+                if (!res.ok) throw new Error(data.message || "Kunde inte hämta din bokning."); // gick det dåligt “kastas” ett fel. Det hoppar direkt ner till .catch.
                 return data;
-            })
-            .then((data) => setBooking(data))
-            .catch((error) => setBookingError(error.message || "Kunde inte hämta din bokning."))
+            }) //Kedjan: then = lyckades, catch = misslyckades, finally = oavsett.
+            .then((data) => setBooking(data)) //lägger bokningen i lådan
+            .catch((error) => setBookingError(error.message || "Kunde inte hämta din bokning.")) //sparar felmeddelandet så det kan visas.
             .finally(() => setBookingLoading(false));
-        }, [token]);
+        }, [token]);//kör om koden om token ändras.
 
     // Inkorgen hämtas med JWT så backend kan begränsa svaret till den inloggade boende.
     useEffect(() => {
@@ -98,6 +101,7 @@ const activeBooking = booking
 
     return (
         <div className="dashboard-shell">
+
             <header className="dashboard-header">
                 <div className="brand-lockup">
                     <span className="brand-mark">S</span>
@@ -113,16 +117,19 @@ const activeBooking = booking
                         <span className="chip-icon">⌖</span>
                         <span>Gjutargatan 26</span>
                     </div>
+
                     <div className="profile-chip">
                         <span className="avatar">{user?.name?.[0] || "B"}</span>
                         <span>{user?.name || "Boende"}</span>
                     </div>
+
                     <button className="logout-button">Logga ut</button>
                 </div>
             </header>
 
 
             <main className="dashboard-main">
+                
                 {bookingError && (
                     <Alert severity="error" role="alert" onClose={() => setBookingError("")} sx={{ mb: 2 }}>
                         {bookingError}
@@ -147,9 +154,10 @@ const activeBooking = booking
                             {activeBooking && <span className="booking-badge"><span className="status-dot" />Aktiv</span>}
                         </div>
 
-                                                {bookingLoading ? (
-                                                    <p className="welcome-copy">Hämtar bokning...</p>
-                                                ) : activeBooking ? (
+                            {bookingLoading ? 
+                            (
+                                <p className="welcome-copy">Hämtar bokning...</p>
+                            ) : activeBooking ? (
                             <div className="booking-display">
                                 <div className="booking-date-box">
                                     <span className="booking-day">{activeBooking.weekday}</span>
