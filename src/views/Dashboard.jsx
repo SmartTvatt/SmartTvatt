@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";  //hämtar token och anvä
 
 import { formatLongDate } from "./bookingDateUtils.js"; // formatLongDate , funktion som gör "2026-10-16" till “fredag 16 oktober”.
 import './Dashboard.css'
+import logo from '../assets/logo.svg'; // samma logga som på login-sidan
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
@@ -14,19 +15,29 @@ export default function Dashboard() {
     const [faultDialogOpen, setFaultDialogOpen] = useState(false);
     const [showNextStep, setShowNextStep] = useState(false);
 
-    const { token, user } = useContext(AuthContext);
+    const { token, user, logout } = useContext(AuthContext);
     const [booking, setBooking] = useState(null);
 
     const [bookingError, setBookingError] = useState("");
     const [bookingLoading, setBookingLoading] = useState(true);
     const [cancelling, setCancelling] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [messagesLoading, setMessagesLoading] = useState(true);
+    const [messagesLoading, setMessagesLoading] = useState(Boolean(token));
     const [messagesError, setMessagesError] = useState("");
     const [faultDraft, setFaultDraft] = useState({ equipment: "", description: "" });
     const [faultSubmitting, setFaultSubmitting] = useState(false);
     const [faultError, setFaultError] = useState("");
     const [faultNotice, setFaultNotice] = useState("");
+
+    // minns vilka meddelanden användaren redan sett (sparat i webbläsaren).
+    // nya meddelanden får en "NY"-stämpel tills sidan laddas om.
+    const [settaMeddelanden] = useState(() => {
+        try {
+            return new Set(JSON.parse(localStorage.getItem("smarttvatt.settaMeddelanden") || "[]"));
+        } catch {
+            return new Set();
+        }
+    });
 
     // Hämtar den inloggades aktiva bokning för dashboarden.
     useEffect(() => {
@@ -58,7 +69,27 @@ export default function Dashboard() {
             .catch((error) => setMessagesError(error.message))
             .finally(() => setMessagesLoading(false));
     }, [token]);
+
+    // när inkorgen har laddats: spara meddelande-id:na så de räknas som sedda nästa gång.
+    useEffect(() => {
+        if (!messages.length) return;
+        try {
+            localStorage.setItem(
+                "smarttvatt.settaMeddelanden",
+                JSON.stringify(messages.map((m) => m._id))
+            );
+        } catch {
+            // struntar i om webbläsaren inte vill spara
+        }
+    }, [messages]);
     
+    // dagens datum till rubriken. sv-SE ger t.ex. "torsdag 30 oktober 2026",
+    // raden under gör bara första bokstaven stor.
+    const todayRaw = new Intl.DateTimeFormat("sv-SE", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric",
+    }).format(new Date());
+    const todayLabel = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
+
     // Gör om bokningen från databasen till det kortet visar
 const activeBooking = booking
   ? {
@@ -105,6 +136,12 @@ const activeBooking = booking
         navigate("/boka");
     };
 
+    // loggar ut: tömmer token och användaren, sen tillbaka till login.
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+    };
+
     const handleFaultReport = async (event) => {
         event.preventDefault();
         if (!token) return;
@@ -140,7 +177,7 @@ const activeBooking = booking
 
             <header className="dashboard-header">
                 <div className="brand-lockup">
-                    <span className="brand-mark">S</span>
+                    <img className="brand-mark" src={logo} alt="SmartTvätt" />
                     <div>
                         <p className="brand-name">SmartTvätt</p>
                         <p className="brand-caption">Din tvättstuga, enklare</p>
@@ -159,7 +196,7 @@ const activeBooking = booking
                         <span>{user?.name || "Boende"}</span>
                     </div>
 
-                    <button className="logout-button">Logga ut</button>
+                    <button type="button" className="logout-button" onClick={handleLogout}>Logga ut</button>
                 </div>
             </header>
 
@@ -181,7 +218,7 @@ const activeBooking = booking
                         <h1>Hej, {user?.name || "boende"}</h1>
                         <p className="welcome-copy">Här är det senaste från din tvättstuga.</p>
                     </div>
-                    <span className="date-label">Torsdag 25 september 2026</span>
+                    <span className="date-label">{todayLabel}</span>
                 </section>
 
                 <section className="dashboard-grid">
@@ -208,7 +245,6 @@ const activeBooking = booking
                                     <h3>{activeBooking.time}</h3>
                                     <p>{activeBooking.location}</p>
                                 </div>
-                                <span className="booking-arrow">→</span>
                             </div>
                         ) : (
                             <p className="welcome-copy">Du har ingen aktiv bokning just nu.</p>
@@ -268,8 +304,10 @@ const activeBooking = booking
                         ) : messagesError ? (
                             <p className="inbox-empty" role="alert">{messagesError}</p>
                         ) : messages.length ? (
-                            messages.map((message) => (
-                                <article className="message-item" key={message._id}>
+                            messages.map((message) => {
+                                const arNy = !settaMeddelanden.has(message._id); // har man inte sett det förut?
+                                return (
+                                <article className={arNy ? "message-item unread" : "message-item"} key={message._id}>
                                     <span className="message-icon">⌁</span>
                                     <div className="message-content">
                                         <div className="message-meta">
@@ -280,8 +318,10 @@ const activeBooking = booking
                                         </div>
                                         <p className="message-preview">{message.body}</p>
                                     </div>
+                                    {arNy && <span className="unread-label">NY</span>}
                                 </article>
-                            ))
+                                );
+                            })
                         ) : (
                             <p className="inbox-empty">Du har inga meddelanden ännu.</p>
                         )}
