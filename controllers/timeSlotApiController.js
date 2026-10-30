@@ -45,3 +45,24 @@ export async function updateTimeSlots(req, res) {
     res.status(500).json({ message: 'Kunde inte spara bokningsschemat.' });
   }
 }
+
+export async function resetTimeSlotDay(req, res) {
+  const { dayKey } = req.params;
+  if (!WEEKDAY_KEYS.includes(dayKey)) {
+    return res.status(400).json({ message: 'Ogiltig veckodag.' });
+  }
+
+  try {
+    await loadWeeklySchedule();
+    const schedule = await TimeSlot.findByIdAndUpdate(
+      'weekly',
+      { $unset: { [`dayOverrides.${dayKey}`]: 1 } },
+      { new: true, runValidators: true }
+    );
+
+    res.json(serializeSchedule(schedule));
+  } catch (error) {
+    console.error('Fel vid återställning av dagschema:', error.message);
+    res.status(500).json({ message: 'Kunde inte återställa dagschemat.' });
+  }
+}

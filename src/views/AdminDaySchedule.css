@@ -35,3 +35,36 @@
 .admin-day-eyebrow {
   margin-top: 0;
 }
+
+.day-schedule-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reset-day-schedule-button {
+  padding: 7px 10px;
+  border: 1px solid #c9e5d7;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--admin-green-dark);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reset-day-schedule-button:not(:disabled):hover {
+  background: #dff4e9;
+}
+
+.reset-day-schedule-button:disabled {
+  cursor: default;
+}
+
+@media (max-width: 600px) {
+  .day-schedule-actions {
+    align-items: flex-end;
+    flex-direction: column;
+  }
+}

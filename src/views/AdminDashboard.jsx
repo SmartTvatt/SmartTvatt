@@ -123,6 +123,10 @@ export default function AdminDashboard() {
         autosave(updatedIntervals);
     }
 
+    const sortedIntervals = [...intervals].sort((left, right) =>
+        left.start.localeCompare(right.start)
+    );
+
     async function sendMessage(event) {
         event.preventDefault();
         setMessageFeedback(null);
@@ -199,7 +203,7 @@ export default function AdminDashboard() {
                         <tbody>
                             {scheduleLoading ? (
                                 <tr><td colSpan="4">Hämtar schemat...</td></tr>
-                            ) : intervals.map((interval, index) => (
+                            ) : sortedIntervals.map((interval, index) => (
                                 <tr key={interval.id}>
                                     <th scope="row">Slot {index + 1}</th>
                                     <td>
