@@ -30,3 +30,11 @@ export async function saveTimeSlots(token, schedule) {
   });
   return readJsonResponse(response);
 }
+
+export async function resetTimeSlotDay(token, dayKey) {
+  const response = await fetch(`/api/admin/timeslots/${encodeURIComponent(dayKey)}`, {
+    method: 'DELETE',
+    headers: { Authorization: 'Bearer ' + token },
+  });
+  return readJsonResponse(response);
+}

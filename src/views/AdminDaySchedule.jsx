@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { bookingWeekdays, getBookingIntervals } from "../../controllers/timeslotController.js";
 import { AuthContext } from "../context/AuthContext";
-import { fetchTimeSlots } from "../api/timeSlots.js";
+import { fetchTimeSlots, resetTimeSlotDay } from "../api/timeSlots.js";
 import { useTimeSlotAutosave } from "../api/useTimeSlotAutosave.js";
 import TimeInput from "./TimeInput.jsx";
 import "./AdminDashboard.css";
@@ -28,8 +28,10 @@ export default function AdminDaySchedule() {
 function DaySchedule({ day }) {
     const { token } = useContext(AuthContext);
     const [intervals, setIntervals] = useState([]);
+    const [hasDayOverride, setHasDayOverride] = useState(false);
     const [scheduleLoading, setScheduleLoading] = useState(true);
     const [scheduleLoaded, setScheduleLoaded] = useState(false);
+    const [resettingSchedule, setResettingSchedule] = useState(false);
     const {
         save: autosave,
         saving: scheduleSaving,
@@ -48,6 +50,7 @@ function DaySchedule({ day }) {
         fetchTimeSlots(token, controller.signal)
             .then((schedule) => {
                 setIntervals(getBookingIntervals(day.key, schedule));
+                setHasDayOverride(Array.isArray(schedule.dayOverrides?.[day.key]));
                 setScheduleLoaded(true);
             })
             .catch((error) => {
@@ -59,6 +62,22 @@ function DaySchedule({ day }) {
 
         return () => controller.abort();
     }, [day.key, setScheduleError, token]);
+
+    async function resetToWeeklySchedule() {
+        if (!hasDayOverride || scheduleSaving || resettingSchedule) return;
+
+        setResettingSchedule(true);
+        setScheduleError("");
+        try {
+            const schedule = await resetTimeSlotDay(token, day.key);
+            setIntervals(getBookingIntervals(day.key, schedule));
+            setHasDayOverride(false);
+        } catch (error) {
+            setScheduleError(error.message);
+        } finally {
+            setResettingSchedule(false);
+        }
+    }
 
     function updateInterval(id, field, value) {
         const updatedIntervals = intervals.map((interval) =>
@@ -118,7 +137,21 @@ function DaySchedule({ day }) {
                         <h2 id="day-interval-heading">Bokningsbara tider</h2>
                         <p>Justera, lägg till eller ta bort en slot för {day.label.toLowerCase()}.</p>
                     </div>
-                    <span className="interval-count">{intervals.length} slots</span>
+                    <div className="day-schedule-actions">
+                        <span className="interval-count">{intervals.length} slots</span>
+                        <button
+                            className="reset-day-schedule-button"
+                            type="button"
+                            disabled={!scheduleLoaded || !hasDayOverride || scheduleSaving || resettingSchedule}
+                            onClick={resetToWeeklySchedule}
+                        >
+                            {resettingSchedule
+                                ? "Synkroniserar..."
+                                : hasDayOverride
+                                    ? "Återställ till veckoschema"
+                                    : "Följer veckoschemat"}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="interval-table-wrap">
@@ -145,7 +178,7 @@ function DaySchedule({ day }) {
                                             id={`start-${interval.id}`}
                                             label={`Starttid för slot ${index + 1}`}
                                             value={interval.start}
-                                            disabled={!scheduleLoaded}
+                                            disabled={!scheduleLoaded || resettingSchedule}
                                             onChange={(value) => updateInterval(interval.id, "start", value)}
                                         />
                                     </td>
@@ -157,7 +190,7 @@ function DaySchedule({ day }) {
                                             id={`end-${interval.id}`}
                                             label={`Sluttid för slot ${index + 1}`}
                                             value={interval.end}
-                                            disabled={!scheduleLoaded}
+                                            disabled={!scheduleLoaded || resettingSchedule}
                                             allowMidnight
                                             onChange={(value) => updateInterval(interval.id, "end", value)}
                                         />
@@ -166,7 +199,7 @@ function DaySchedule({ day }) {
                                         <button
                                             className="remove-interval-button"
                                             type="button"
-                                            disabled={!scheduleLoaded}
+                                            disabled={!scheduleLoaded || resettingSchedule}
                                             aria-label={`Ta bort slot ${index + 1} ${day.label.toLowerCase()}`}
                                             onClick={() => removeInterval(interval.id)}
                                         >
@@ -196,7 +229,7 @@ function DaySchedule({ day }) {
                         <TimeInput
                             label={`Starttid för nytt intervall ${day.label.toLowerCase()}`}
                             value={newInterval.start}
-                            disabled={!scheduleLoaded}
+                            disabled={!scheduleLoaded || resettingSchedule}
                             onChange={(value) => setNewInterval((current) => ({ ...current, start: value }))}
                         />
                     </label>
@@ -205,17 +238,18 @@ function DaySchedule({ day }) {
                         <TimeInput
                             label={`Sluttid för nytt intervall ${day.label.toLowerCase()}`}
                             value={newInterval.end}
-                            disabled={!scheduleLoaded}
+                            disabled={!scheduleLoaded || resettingSchedule}
                             allowMidnight
                             onChange={(value) => setNewInterval((current) => ({ ...current, end: value }))}
                         />
                     </label>
-                    <button className="add-interval-button" type="submit" disabled={!scheduleLoaded}>Lägg till</button>
+                    <button className="add-interval-button" type="submit" disabled={!scheduleLoaded || resettingSchedule}>Lägg till</button>
                 </form>
                 {formError && <p className="form-error" role="alert">{formError}</p>}
                 {scheduleError && <p className="form-error" role="alert">{scheduleError}</p>}
                 {scheduleNotice && <p className="message-feedback success" role="status">{scheduleNotice}</p>}
                 {scheduleSaving && <p role="status">Sparar ändring...</p>}
+                {resettingSchedule && <p role="status">Synkroniserar med veckoschemat...</p>}
             </section>
         </main>
     );

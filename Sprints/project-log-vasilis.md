@@ -1,6 +1,6 @@
 # Project Log — Vasilis
 
-## Work so far
+## Work up until assignment 1
 - Add your completed project work here.
 
 ## Weekly updates
