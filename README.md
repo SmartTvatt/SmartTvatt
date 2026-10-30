@@ -4,7 +4,7 @@ SmartTvätt är en webbapp för bokning av tvättider. Frontend och backend dela
 
 ## Förutsättningar
 
-- Node.js 18 eller senare
+- Node.js 20.19.0 eller senare
 - MongoDB lokalt eller via Atlas
 
 ## Installation
@@ -66,12 +66,15 @@ npm run dev
 
 ## Kontrollera koden
 
-Kör dessa kommandon från projektmappen för att bygga frontend respektive kontrollera kodstil:
+Kör dessa kommandon från projektmappen för att testa schemavalideringen, bygga frontend och kontrollera kodstil:
 
 ```bash
+npm test
 npm run build
 npm run lint
 ```
+
+Det första schemat med standardtider skapas automatiskt när backend startar. Administratörens ändringar av intervall sparas automatiskt i MongoDB; tillägg och borttagningar sparas direkt, och tidsändringar skickas direkt till API:t. Eventuella validerings- eller serverfel visas på schemasidan.
 
 ## Projektstruktur
 
@@ -88,7 +91,8 @@ Projektet följer en tydlig **MVC-struktur** för att hålla koden ren och struk
 - **React** bygger vyerna och håller formulär- och sidtillstånd, till exempel bokning, inkorg och adminutskick.
 - **Vite** startar utvecklingsservern och bygger frontendfilerna snabbt.
 - **Express** tillhandahåller API-rutter och kopplar dem till controllers som hanterar anropens regler.
-- **MongoDB och Mongoose** lagrar användare, bokningar och meddelanden; Mongoose-modeller beskriver dokumentens struktur.
+- **MongoDB och Mongoose** lagrar användare, bokningar, meddelanden och bokningsschema; Mongoose-modeller beskriver dokumentens struktur.
+- **Bokningsschemat** lagras i MongoDB. Administratören kan spara ett gemensamt veckoschema och separata dagsöverskrivningar; servern kontrollerar att bokningar följer det sparade schemat.
 - **JWT** identifierar inloggade användare. Middleware kontrollerar token och adminroll innan admin-API:er körs.
 - **ESLint** hittar kodstilproblem och vanliga fel med `npm run lint`.
 
@@ -104,12 +108,21 @@ Adminmeddelanden skickas som in-app-meddelanden, inte e-post. Admin-API:et spara
 
 ### Bokningar (`/api/bookings`)
 - `GET /api/bookings` – Hämta alla bokningar / lediga tider
+- `GET /api/bookings/mine` – Hämta den inloggades aktiva bokning (Kräver JWT)
 - `POST /api/bookings` – Skapa ny tvättbokning (Kräver JWT)
 - `DELETE /api/bookings/:id` – Avboka tvättid (Kräver JWT)
+
+### Bokningsschema
+- `GET /api/timeslots` – Hämta veckoschema och dagsöverskrivningar (Kräver JWT)
+- `PUT /api/admin/timeslots` – Spara gemensamt schema eller en dagsöverskrivning (Kräver admin-JWT)
 
 ### Admin (`/api/admin`)
 - `GET /api/admin/users` – Hämta användare (Kräver admin-JWT)
 - `POST /api/admin/messages` – Skicka meddelande till en boende eller alla boende (Kräver admin-JWT)
+- `GET /api/admin/fault-reports` – Hämta boendes felanmälningar (Kräver admin-JWT)
 
 ### Meddelanden (`/api/messages`)
 - `GET /api/messages/mine` – Hämta den inloggades meddelanden (Kräver JWT)
+
+### Felanmälningar (`/api/fault-reports`)
+- `POST /api/fault-reports` – Skicka en felanmälan (Kräver boende-JWT)

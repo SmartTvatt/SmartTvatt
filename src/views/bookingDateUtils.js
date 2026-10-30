@@ -1,3 +1,4 @@
+// Skapa lokalt kalenderdatum utan att konvertera via UTC.
 export function formatDateOnly(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -5,6 +6,7 @@ export function formatDateOnly(date) {
   return `${year}-${month}-${day}`;
 }
 
+// Hitta måndagen som inleder kalenderveckan.
 export function getMonday(date) {
   const monday = new Date(date);
   monday.setHours(0, 0, 0, 0);
@@ -12,12 +14,14 @@ export function getMonday(date) {
   return monday;
 }
 
+// Flytta datumet ett visst antal kalenderdagar.
 export function addDays(date, count) {
   const result = new Date(date);
   result.setDate(result.getDate() + count);
   return result;
 }
 
+// Formatera ett YYYY-MM-DD-värde stabilt oavsett användarens tidszon.
 export function formatLongDate(dateOnly) {
   const [year, month, day] = dateOnly.split("-").map(Number);
   return new Intl.DateTimeFormat("sv-SE", {

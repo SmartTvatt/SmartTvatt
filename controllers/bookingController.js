@@ -1,25 +1,19 @@
-                                                          //Här finns funktionerna som läser och skriver bokningar i databasen
+import Booking from '../models/Booking.js';
+import {
+  isTimeSlotAvailable,
+  loadWeeklySchedule,
+} from '../services/timeSlotService.js';
 
-import Booking from '../models/Booking.js';  //Hämtar mallen från booking.js, så vi kan söka och spara bokningar   
+const isDateOnly = (value) => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
 
-//(funk). Kollar att ett datum är skrivet som "2026-10-16"
-const isDateOnly = (value) => 
-{
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) 
-    {
-    return false;                   // Är det inte text i rätt format? Då är det fel.     
-    }
-//gör om texten till ett datum o kolla om det är gillitg 
-const date = new Date(`${value}T00:00:00.000Z`);
+  const date = new Date(`${value}T00:00:00.000Z`);
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 };
 
-//---------------------------------------------------------------------------------------------------
-//(funk). 
-// När en regel i Booking.js bryts ger databasen felkod 11000.
-// Den här funktionen gör om det felet till ett tydligt meddelande.
-const duplicateKeyResponse = (error, res) => 
-{                                           // Är det inte felkod 11000 gör vi ingenting här.
+const duplicateKeyResponse = (error, res) => {
   if (error.code !== 11000) return false;
 
   if (error.keyPattern?.user)             // Regel 1 bröts: personen har redan en aktiv bokning.
@@ -44,6 +38,7 @@ export const getBookings = async (req, res) => {
       return res.status(400).json({ message: 'Ange veckans startdatum i formatet ÅÅÅÅ-MM-DD.' });
     }
 
+    // Ett halvöppet intervall fångar hela veckan utan att ta med nästa måndag.
     const start = new Date(`${weekStart}T00:00:00.000Z`);
     const end = new Date(start);
     end.setUTCDate(end.getUTCDate() + 7);
@@ -99,12 +94,16 @@ export const createBooking = async (req, res) => {
       return res.status(400).json({ message: 'Datum, tid och plats måste anges.' });
     }
 
-    // Skapa och spara bokningen i databasen.
-  // user tas från token (req.user.id), inte från det frontend skickar.
-    // Då kan ingen boka i någon annans namn.
+    // Räkna om datumet och kontrollera att tiden finns i veckoschemat.
+    const dateValue = new Date(`${date}T00:00:00.000Z`);
+    const schedule = await loadWeeklySchedule();
+    if (!isTimeSlotAvailable(schedule, dateValue, time)) {
+      return res.status(400).json({ message: 'Den valda tiden är inte bokningsbar den dagen.' });
+    }
+
     const booking = await Booking.create({
       user: req.user.id,
-      date: new Date(`${date}T00:00:00.000Z`),
+      date: dateValue,
       time: time.trim(),
       location: location.trim(),
     });
@@ -131,9 +130,6 @@ export const cancelBooking = async (req, res) => {
         user: req.user.id,      // måste vara MIN bokning
         status: 'aktiv',        // och fortfarande aktiv
       },
-
-      // Vi raderar inte bokningen, vi ändrar status till "avbokad".
-      // Då finns historiken kvar, och tiden blir ledig igen.
       { status: 'avbokad' },
       { new: true, runValidators: true }       // new: true = skicka tillbaka den uppdaterade versionen.
     );                                         // runValidators: true = kolla reglerna i mallen (t.ex. enum).

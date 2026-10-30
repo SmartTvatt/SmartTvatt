@@ -30,6 +30,7 @@ export default function BookingView() {
   const { token } = useContext(AuthContext);
   const [booking, setBooking] = useState(null);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [schedule, setSchedule] = useState(null);
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -40,6 +41,7 @@ export default function BookingView() {
 
   const weekStartDate = formatDateOnly(weekStart);
 
+  // Laddar egen bokning och veckans upptagna tider parallellt.
   useEffect(() => {
     if (!token) return undefined;
 
@@ -49,16 +51,19 @@ export default function BookingView() {
       setErrorMessage("");
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        const [myBookingResponse, slotsResponse] = await Promise.all([
+        const [myBookingResponse, slotsResponse, scheduleResponse] = await Promise.all([
           fetch("/api/bookings/mine", { headers, signal: controller.signal }),
           fetch(`/api/bookings?weekStart=${weekStartDate}`, { headers, signal: controller.signal }),
+          fetch("/api/timeslots", { headers, signal: controller.signal }),
         ]);
-        const [myBooking, slots] = await Promise.all([
+        const [myBooking, slots, savedSchedule] = await Promise.all([
           readResponse(myBookingResponse),
           readResponse(slotsResponse),
+          readResponse(scheduleResponse),
         ]);
         setBooking(myBooking);
         setBookedSlots(slots);
+        setSchedule(savedSchedule);
       } catch (error) {
         if (error.name !== "AbortError") {
           setErrorMessage(error.message || "Kunde inte hämta bokningsuppgifter.");
@@ -89,6 +94,7 @@ export default function BookingView() {
     setSubmitting(true);
     setErrorMessage("");
     try {
+      // Skickar det valda datumet och intervallet till API:t för lagring.
       const response = await fetch("/api/bookings", {
         method: "POST",
         headers: {
@@ -170,8 +176,9 @@ export default function BookingView() {
         onSlotClick={handleSlotClick}
         bookedSlots={bookedSlots}
         userBooking={booking}
+        schedule={schedule}
         weekStart={weekStart}
-        disabled={loading || Boolean(errorMessage)}
+        disabled={loading || !schedule || Boolean(errorMessage)}
       />
 
       <BookingDialog

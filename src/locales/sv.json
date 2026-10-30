@@ -1,30 +1,51 @@
 {
-    "common": {
-      "appName": "SmartTvätt",
-      "tagline": "Din tvättstuga, enklare",
-      "loading": "Laddar...",
-      "logout": "Logga ut"
-    },
-    "auth": {
-      "namePlaceholder": "Namn och efternamn",  
-      "welcomeBack": "Välkommen tillbaka",
-      "createAccount": "Skapa ditt konto",
-      "emailLabel": "E-postadress",
-      "emailPlaceholder": "namn@brf.se",
-      "passwordLabel": "Lösenord",
-      "confirmPasswordLabel": "Bekräfta lösenord",
-      "nameLabel": "Förnamn Efternamn",
-      "loginBtn": "Logga in",
-      "loggingIn": "Loggar in...",
-      "registerBtn": "Skapa konto",
-      "noAccount": "Inget konto ännu?",
-      "hasAccount": "Har du redan ett konto?",
-      "registerHere": "Skapa konto här",
-      "loginHere": "Logga in här"
-    },
-    "nav": {
-      "dashboard": "Bokning",
-      "admin": "Admin",
-      "profile": "Profil"
-    }
+  "common": {
+    "appName": "SmartTvätt",
+    "tagline": "Din tvättstuga, enklare",
+    "loading": "Laddar...",
+    "logout": "Logga ut"
+  },
+  "auth": {
+    "namePlaceholder": "Namn och efternamn",  
+    "welcomeBack": "Välkommen tillbaka",
+    "createAccount": "Skapa ditt konto",
+    "emailLabel": "E-postadress",
+    "emailPlaceholder": "namn@brf.se",
+    "passwordLabel": "Lösenord",
+    "confirmPasswordLabel": "Bekräfta lösenord",
+    "nameLabel": "Förnamn Efternamn",
+    "loginBtn": "Logga in",
+    "loggingIn": "Loggar in...",
+    "registerBtn": "Skapa konto",
+    "noAccount": "Inget konto ännu?",
+    "hasAccount": "Har du redan ett konto?",
+    "registerHere": "Skapa konto här",
+    "loginHere": "Logga in här",
+    "forgotPasswordLink": "Glömt lösenord?",
+    "forgotPasswordTitle": "Glömt lösenord",
+    "forgotPasswordDescription": "Ange din e-postadress för att återställa lösenordet.",
+    "forgotPasswordFailed": "Det gick inte att begära en lösenordsåterställning.",
+    "resetLinkUnavailable": "En återställningslänk kunde inte skapas.",
+    "resetLinkCreated": "Återställningslänken är skapad.",
+    "continueToReset": "Fortsätt för att återställa lösenordet",
+    "sendResetLink": "Skapa återställningslänk",
+    "sendingResetLink": "Skapar återställningslänk...",
+    "resetPasswordTitle": "Välj ett nytt lösenord",
+    "resetPasswordDescription": "Ange och bekräfta ditt nya lösenord.",
+    "resetPasswordButton": "Spara nytt lösenord",
+    "resettingPassword": "Sparar lösenord...",
+    "resetPasswordFailed": "Det gick inte att återställa lösenordet.",
+    "passwordResetSuccess": "Lösenordet har uppdaterats. Du kan nu logga in.",
+    "passwordTooShort": "Lösenordet måste vara minst 6 tecken.",
+    "passwordsDoNotMatch": "Lösenorden matchar inte.",
+    "backToLogin": "Tillbaka till inloggningen",
+    "savePassword": "Spara nytt lösenord",
+    "saving": "Sparar...",
+    "resetSuccess": "Lösenordet har uppdaterats! Du kan nu logga in."
+  },
+  "nav": {
+    "dashboard": "Bokning",
+    "admin": "Admin",
+    "profile": "Profil"
   }
+}

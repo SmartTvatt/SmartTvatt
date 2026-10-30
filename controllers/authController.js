@@ -6,7 +6,7 @@ import User from '../models/User.js';
 const generateToken = (id, role) => {
   // Tokenen signeras med serverns hemlighet och innehåller användarens id och roll.
   return jwt.sign({ id, role }, process.env.JWT_SECRET || 'fallback_secret', {
-    expiresIn: '30d',
+    expiresIn: '7d',
   });
 };
 
@@ -95,15 +95,26 @@ export const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'Ingen användare hittades med den e-postadressen' });
     }
 
-    // Generera återställningstoken via User.js-metoden.
-    const resetToken = user.getResetPasswordToken();
+    // 1. Skapa en slumpmässig ohashad token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // 2. Hasha den med SHA-256 och spara i samma fält som resetPassword letar efter
+    user.resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    // 3. Sätt giltighetstid till 10 minuter från nu
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    // 4. Spara till databasen utan validering på lösenord m.m.
     await user.save({ validateBeforeSave: false });
 
-    // I produktion skickas ett mejl här. För utveckling returnerar vi token/länk direkt.
+    // 5. Returnera ohashade resetToken till frontenden
     res.status(200).json({
       success: true,
       message: 'Återställningstoken skapad',
-      resetToken: resetToken, // Används i frontend för att bygga återställningssidan.
+      resetToken: resetToken,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

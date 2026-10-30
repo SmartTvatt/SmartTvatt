@@ -26,6 +26,7 @@ export default function BookingInfoCard({ booking = null }) {
             {/* Uppgifterna kommer från användande komponent, inte från hårdkodad exempeldata. */}
             {/* Visar själva bokningsinformationen. */}
             <Typography variant="body1">
+              {/* Datumet kommer från databasen som ISO-sträng. */}
               Du har bokat: {booking.date
                 ? formatLongDate(booking.date.slice(0, 10))
                 : booking.day} kl {booking.time}

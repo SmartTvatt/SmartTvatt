@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import { formatLongDate } from "./bookingDateUtils.js";
 
 export default function BookingDialog({ open, onClose, onConfirm, selectedSlot, submitting = false }) {
-  // En bokning kan bara bekräftas när användaren faktiskt har valt en tid.
+  // Bekräfta först när en tid är vald och inget sparanrop pågår.
   const canConfirm = selectedSlot !== null && !submitting;
 
   return (
@@ -38,6 +38,7 @@ export default function BookingDialog({ open, onClose, onConfirm, selectedSlot, 
           Avbryt
         </Button>
 
+        {/* Föräldravyn skickar valet vidare till boknings-API:t. */}
         <Button
           className="booking-dialog__confirm"
           variant="contained"
